@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>MediGuard • Smart Medicine Onboarding</title>
+
+    <!-- ============================================= -->
+    <!-- GOOGLE FONT -->
+    <!-- ============================================= -->
+    <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- ============================================= -->
+    <!-- FONT AWESOME -->
+    <!-- ============================================= -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+
+        /* =============================================
+           GLOBAL
+        ============================================= */
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+
+            font-family:'Inter',sans-serif;
+
+            background:
+                radial-gradient(circle at top right,#172554 0%,#020617 35%),
+                linear-gradient(
+                    135deg,
+                    #020617,
+                    #0f172a,
+                    #1e293b
+                );
+
+            color:white;
+
+            min-height:100vh;
+
+            overflow-x:hidden;
+        }
+
+        ::-webkit-scrollbar{
+            width:8px;
+        }
+
+        ::-webkit-scrollbar-thumb{
+            background:#334155;
+            border-radius:20px;
+        }
+
+        /* =============================================
+           PAGE
+        ============================================= */
+
+        .page{
+
+            padding:34px;
+        }
+
+        /* =============================================
+           HEADER
+        ============================================= */
+
+        .header{
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            margin-bottom:30px;
+        }
+
+        .header h1{
+
+            font-size:42px;
+            font-weight:800;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffffff,
+                    #4ade80
+                );
+
+            background-clip:text;
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .header p{
+
+            color:#94a3b8;
+
+            margin-top:10px;
+        }
+
+        .back-btn{
+
+            border:none;
+
+            padding:14px 22px;
+
+            border-radius:16px;
+
+            background:
+                rgba(255,255,255,.06);
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            color:white;
+
+            cursor:pointer;
+
+            transition:.3s ease;
+        }
+
+        .back-btn:hover{
+
+            transform:translateY(-3px);
+
+            background:
+                rgba(74,222,128,.10);
+        }
+
+        /* =============================================
+           KPI GRID
+        ============================================= */
+
+        .kpi-grid{
+
+            display:grid;
+
+            grid-template-columns:
+                repeat(auto-fit,minmax(240px,1fr));
+
+            gap:22px;
+
+            margin-bottom:28px;
+        }
+
+        .kpi-card{
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(15,23,42,.95),
+                    rgba(30,41,59,.84)
+                );
+
+            border:
+                1px solid rgba(255,255,255,.06);
+
+            backdrop-filter:blur(18px);
+
+            border-radius:26px;
+
+            padding:26px;
+
+            transition:.3s ease;
+        }
+
+        .kpi-card:hover{
+
+            transform:translateY(-5px);
+
+            border-color:
+                rgba(74,222,128,.22);
+        }
+
+        .kpi-top{
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            margin-bottom:18px;
+        }
+
+        .kpi-icon{
+
+            width:58px;
+            height:58px;
+
+            border-radius:18px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            background:
+                rgba(74,222,128,.12);
+
+            color:#4ade80;
+
+            font-size:22px;
+        }
+
+        .kpi-label{
+
+            color:#94a3b8;
+
+            font-size:14px;
+        }
+
+        .kpi-value{
+
+            font-size:34px;
+            font-weight:800;
+        }
+
+        /* =============================================
+           MAIN GRID
+        ============================================= */
+
+        .main-grid{
+
+            display:grid;
+
+            grid-template-columns:
+                1.2fr .8fr;
+
+            gap:28px;
+        }
+
+        @media(max-width:1100px){
+
+            .main-grid{
+                grid-template-columns:1fr;
+            }
+        }
+
+        /* =============================================
+           GLASS CARD
+        ============================================= */
+
+        .glass-card{
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(15,23,42,.95),
+                    rgba(30,41,59,.84)
+                );
+
+            border:
+                1px solid rgba(255,255,255,.06);
+
+            backdrop-filter:blur(18px);
+
+            border-radius:30px;
+
+            padding:30px;
+        }
+
+        .card-title{
+
+            display:flex;
+            align-items:center;
+            gap:12px;
+
+            font-size:22px;
+            font-weight:700;
+
+            margin-bottom:26px;
+        }
+
+        .card-title i{
+
+            color:#4ade80;
+        }
+
+        /* =============================================
+           INPUT GROUP
+        ============================================= */
+
+        .input-group{
+
+            margin-bottom:22px;
+        }
+
+        .input-group label{
+
+            display:block;
+
+            margin-bottom:10px;
+
+            color:#94a3b8;
+
+            font-size:14px;
+        }
+
+        .input-group input{
+
+            width:100%;
+
+            padding:18px;
+
+            border:none;
+
+            outline:none;
+
+            border-radius:18px;
+
+            background:
+                rgba(15,23,42,.95);
+
+            border:
+                1px solid rgba(255,255,255,.06);
+
+            color:white;
+
+            font-size:15px;
+
+            transition:.3s ease;
+        }
+
+        .input-group input:focus{
+
+            border-color:
+                rgba(74,222,128,.35);
+
+            box-shadow:
+                0 0 18px rgba(74,222,128,.12);
+        }
+
+        .input-group input.invalid{
+
+            border-color:
+                rgba(239,68,68,.45);
+
+            box-shadow:
+                0 0 18px rgba(239,68,68,.12);
+        }
+
+        /* =============================================
+           BATCH PREVIEW
+        ============================================= */
+
+        .batch-preview{
+
+            padding:18px;
+
+            border-radius:18px;
+
+            background:
+                rgba(74,222,128,.08);
+
+            border:
+                1px solid rgba(74,222,128,.14);
+
+            margin-bottom:24px;
+        }
+
+        .batch-preview-title{
+
+            color:#94a3b8;
+
+            font-size:14px;
+
+            margin-bottom:8px;
+        }
+
+        .batch-code{
+
+            font-size:22px;
+            font-weight:800;
+
+            color:#4ade80;
+        }
+
+        /* =============================================
+           STATUS PANEL
+        ============================================= */
+
+        .status-grid{
+
+            display:grid;
+
+            gap:18px;
+        }
+
+        .status-card{
+
+            padding:20px;
+
+            border-radius:20px;
+
+            background:
+                rgba(255,255,255,.03);
+
+            border:
+                1px solid rgba(255,255,255,.06);
+        }
+
+        .status-header{
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            margin-bottom:14px;
+        }
+
+        .status-title{
+
+            color:#94a3b8;
+        }
+
+        .status-pill{
+
+            padding:6px 12px;
+
+            border-radius:999px;
+
+            font-size:12px;
+            font-weight:700;
+        }
+
+        .safe{
+
+            background:
+                rgba(74,222,128,.14);
+
+            color:#4ade80;
+        }
+
+        .warning{
+
+            background:
+                rgba(250,204,21,.14);
+
+            color:#facc15;
+        }
+
+        .danger{
+
+            background:
+                rgba(239,68,68,.14);
+
+            color:#ef4444;
+        }
+
+        .status-value{
+
+            font-size:20px;
+            font-weight:700;
+        }
+
+        /* =============================================
+           BUTTONS
+        ============================================= */
+
+        .btn{
+
+            width:100%;
+
+            padding:18px;
+
+            border:none;
+
+            border-radius:18px;
+
+            font-weight:800;
+
+            cursor:pointer;
+
+            transition:.3s ease;
+
+            font-size:15px;
+        }
+
+        .submit-btn{
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4ade80,
+                    #22c55e
+                );
+
+            color:#04130a;
+        }
+
+        .submit-btn:hover{
+
+            transform:translateY(-3px);
+
+            box-shadow:
+                0 0 24px rgba(74,222,128,.24);
+        }
+
+        .submit-btn:disabled{
+
+            opacity:.5;
+
+            cursor:not-allowed;
+        }
+
+        /* =============================================
+           ALERT BOX
+        ============================================= */
+
+        .alert-box{
+
+            margin-top:20px;
+
+            padding:18px;
+
+            border-radius:18px;
+
+            display:none;
+
+            font-weight:600;
+        }
+
+        .alert-success{
+
+            display:block;
+
+            background:
+                rgba(74,222,128,.12);
+
+            border:
+                1px solid rgba(74,222,128,.22);
+
+            color:#4ade80;
+        }
+
+        .alert-error{
+
+            display:block;
+
+            background:
+                rgba(239,68,68,.12);
+
+            border:
+                1px solid rgba(239,68,68,.22);
+
+            color:#ef4444;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- ========================================= -->
+        <!-- HEADER -->
+        <!-- ========================================= -->
+
+        <div class="header">
+
+            <div>
+
+                <h1>
+                    Smart Medicine Onboarding
+                </h1>
+
+                <p>
+                    FEFO-ready pharmacy inventory registration
+                </p>
+
+            </div>
+
+            <button class="back-btn"
+                onclick="goBack()">
+
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Inventory
+
+            </button>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- KPI -->
+        <!-- ========================================= -->
+
+        <div class="kpi-grid">
+
+            <div class="kpi-card">
+
+                <div class="kpi-top">
+
+                    <div>
+
+                        <div class="kpi-label">
+                            FEFO Protection
+                        </div>
+
+                        <div class="kpi-value">
+                            ON
+                        </div>
+
+                    </div>
+
+                    <div class="kpi-icon">
+
+                        <i class="fa-solid fa-shield-heart"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="kpi-card">
+
+                <div class="kpi-top">
+
+                    <div>
+
+                        <div class="kpi-label">
+                            Batch Tracking
+                        </div>
+
+                        <div class="kpi-value">
+                            ACTIVE
+                        </div>
+
+                    </div>
+
+                    <div class="kpi-icon">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="kpi-card">
+
+                <div class="kpi-top">
+
+                    <div>
+
+                        <div class="kpi-label">
+                            Expiry Monitoring
+                        </div>
+
+                        <div class="kpi-value">
+                            LIVE
+                        </div>
+
+                    </div>
+
+                    <div class="kpi-icon">
+
+                        <i class="fa-solid fa-calendar-xmark"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="kpi-card">
+
+                <div class="kpi-top">
+
+                    <div>
+
+                        <div class="kpi-label">
+                            ERP Status
+                        </div>
+
+                        <div class="kpi-value">
+                            READY
+                        </div>
+
+                    </div>
+
+                    <div class="kpi-icon">
+
+                        <i class="fa-solid fa-hospital"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- MAIN GRID -->
+        <!-- ========================================= -->
+
+        <div class="main-grid">
+
+            <!-- ===================================== -->
+            <!-- FORM -->
+            <!-- ===================================== -->
+
+            <div class="glass-card">
+
+                <div class="card-title">
+
+                    <i class="fa-solid fa-capsules"></i>
+
+                    Register New Medicine
+
+                </div>
+
+                <!-- ================================ -->
+                <!-- MEDICINE NAME -->
+                <!-- ================================ -->
+
+                <div class="input-group">
+
+                    <label>
+                        Medicine Name
+                    </label>
+
+                    <input
+                        id="medicineName"
+                        type="text"
+                        placeholder="Enter medicine name">
+
+                </div>
+
+                <!-- ================================ -->
+                <!-- STOCK -->
+                <!-- ================================ -->
+
+                <div class="input-group">
+
+                    <label>
+                        Initial Stock Quantity
+                    </label>
+
+                    <input
+                        id="stock"
+                        type="number"
+                        placeholder="Enter stock quantity">
+
+                </div>
+
+                <!-- ================================ -->
+                <!-- MIN STOCK -->
+                <!-- ================================ -->
+
+                <div class="input-group">
+
+                    <label>
+                        Minimum Stock Threshold
+                    </label>
+
+                    <input
+                        id="minStock"
+                        type="number"
+                        placeholder="Enter minimum stock">
+
+                </div>
+
+                <!-- ================================ -->
+                <!-- EXPIRY -->
+                <!-- ================================ -->
+
+                <div class="input-group">
+
+                    <label>
+                        Batch Expiry Date
+                    </label>
+
+                    <input
+                        id="expiryDate"
+                        type="date">
+
+                </div>
+
+                <!-- ================================ -->
+                <!-- AUTO BATCH -->
+                <!-- ================================ -->
+
+                <div class="batch-preview">
+
+                    <div class="batch-preview-title">
+
+                        Auto Generated Batch Code
+
+                    </div>
+
+                    <div class="batch-code"
+                        id="batchCodePreview">
+
+                        MED-2026-001
+
+                    </div>
+
+                </div>
+
+                <!-- ================================ -->
+                <!-- SUBMIT -->
+                <!-- ================================ -->
+
+                <button class="btn submit-btn"
+                    id="submitBtn"
+                    onclick="registerMedicine()">
+
+                    Register Medicine
+
+                </button>
+
+                <!-- ================================ -->
+                <!-- ALERT -->
+                <!-- ================================ -->
+
+                <div class="alert-box"
+                    id="alertBox"></div>
+
+            </div>
+
+            <!-- ===================================== -->
+            <!-- LIVE INTELLIGENCE -->
+            <!-- ===================================== -->
+
+            <div class="glass-card">
+
+                <div class="card-title">
+
+                    <i class="fa-solid fa-brain"></i>
+
+                    Live Inventory Intelligence
+
+                </div>
+
+                <div class="status-grid">
+
+                    <!-- ============================ -->
+                    <!-- EXPIRY STATUS -->
+                    <!-- ============================ -->
+
+                    <div class="status-card">
+
+                        <div class="status-header">
+
+                            <div class="status-title">
+
+                                Expiry Analysis
+
+                            </div>
+
+                            <div class="status-pill safe"
+                                id="expiryStatusPill">
+
+                                SAFE
+
+                            </div>
+
+                        </div>
+
+                        <div class="status-value"
+                            id="expiryMessage">
+
+                            Awaiting expiry date...
+
+                        </div>
+
+                    </div>
+
+                    <!-- ============================ -->
+                    <!-- STOCK STATUS -->
+                    <!-- ============================ -->
+
+                    <div class="status-card">
+
+                        <div class="status-header">
+
+                            <div class="status-title">
+
+                                Inventory Health
+
+                            </div>
+
+                            <div class="status-pill safe"
+                                id="stockStatusPill">
+
+                                HEALTHY
+
+                            </div>
+
+                        </div>
+
+                        <div class="status-value"
+                            id="stockMessage">
+
+                            Awaiting stock data...
+
+                        </div>
+
+                    </div>
+
+                    <!-- ============================ -->
+                    <!-- FEFO -->
+                    <!-- ============================ -->
+
+                    <div class="status-card">
+
+                        <div class="status-header">
+
+                            <div class="status-title">
+
+                                FEFO Readiness
+
+                            </div>
+
+                            <div class="status-pill safe">
+
+                                ACTIVE
+
+                            </div>
+
+                        </div>
+
+                        <div class="status-value">
+
+                            Batch lifecycle initialized
+
+                        </div>
+
+                    </div>
+
+                    <!-- ============================ -->
+                    <!-- COMPLIANCE -->
+                    <!-- ============================ -->
+
+                    <div class="status-card">
+
+                        <div class="status-header">
+
+                            <div class="status-title">
+
+                                Pharmacy Compliance
+
+                            </div>
+
+                            <div class="status-pill safe"
+                                id="compliancePill">
+
+                                VALID
+
+                            </div>
+
+                        </div>
+
+                        <div class="status-value"
+                            id="complianceMessage">
+
+                            Waiting for validation...
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // =============================================
+        // API BASE
+        // =============================================
+
+        const API_BASE_URL =
+            "http://127.0.0.1:5001";
+
+        // =============================================
+        // INPUTS
+        // =============================================
+
+        const medicineName =
+            document.getElementById(
+                "medicineName"
+            );
+
+        const stock =
+            document.getElementById(
+                "stock"
+            );
+
+        const minStock =
+            document.getElementById(
+                "minStock"
+            );
+
+        const expiryDate =
+            document.getElementById(
+                "expiryDate"
+            );
+
+        // =============================================
+        // LIVE EVENTS
+        // =============================================
+
+        medicineName.addEventListener(
+            "input",
+            generateBatchCode
+        );
+
+        stock.addEventListener(
+            "input",
+            updateStockStatus
+        );
+
+        minStock.addEventListener(
+            "input",
+            updateStockStatus
+        );
+
+        expiryDate.addEventListener(
+            "input",
+            updateExpiryStatus
+        );
+
+        // =============================================
+        // AUTO BATCH GENERATION
+        // =============================================
+
+        function generateBatchCode(){
+
+            const name =
+                medicineName.value
+                .trim()
+                .toUpperCase();
+
+            if(!name){
+
+                document.getElementById(
+                    "batchCodePreview"
+                ).innerText =
+                    "MED-2026-001";
+
+                return;
+            }
+
+            const prefix =
+                name.substring(0,4);
+
+            const year =
+                new Date()
+                .getFullYear();
+
+            const random =
+                Math.floor(
+                    100 + Math.random() * 900
+                );
+
+            const batchCode =
+                `${prefix}-${year}-${random}`;
+
+            document.getElementById(
+                "batchCodePreview"
+            ).innerText =
+                batchCode;
+        }
+
+        // =============================================
+        // EXPIRY ANALYSIS
+        // =============================================
+
+        function updateExpiryStatus(){
+
+            const value =
+                expiryDate.value;
+
+            if(!value){
+                return;
+            }
+
+            const today =
+                new Date();
+
+            const expiry =
+                new Date(value);
+
+            const diffDays =
+                Math.ceil(
+                    (expiry - today)
+                    /
+                    (1000 * 60 * 60 * 24)
+                );
+
+            const pill =
+                document.getElementById(
+                    "expiryStatusPill"
+                );
+
+            const message =
+                document.getElementById(
+                    "expiryMessage"
+                );
+
+            const compliancePill =
+                document.getElementById(
+                    "compliancePill"
+                );
+
+            const complianceMessage =
+                document.getElementById(
+                    "complianceMessage"
+                );
+
+            // =========================================
+            // EXPIRED
+            // =========================================
+
+            if(diffDays <= 0){
+
+                pill.className =
+                    "status-pill danger";
+
+                pill.innerText =
+                    "EXPIRED";
+
+                message.innerText =
+                    "Expired medicines cannot enter inventory";
+
+                compliancePill.className =
+                    "status-pill danger";
+
+                compliancePill.innerText =
+                    "BLOCKED";
+
+                complianceMessage.innerText =
+                    "Pharmacy compliance violation detected";
+
+                expiryDate.classList.add(
+                    "invalid"
+                );
+
+                document.getElementById(
+                    "submitBtn"
+                ).disabled = true;
+
+                return;
+            }
+
+            // =========================================
+            // CRITICAL
+            // =========================================
+
+            if(diffDays <= 30){
+
+                pill.className =
+                    "status-pill danger";
+
+                pill.innerText =
+                    "CRITICAL";
+
+                message.innerText =
+                    `Only ${diffDays} days remaining`;
+
+            }
+
+            // =========================================
+            // WARNING
+            // =========================================
+
+            else if(diffDays <= 90){
+
+                pill.className =
+                    "status-pill warning";
+
+                pill.innerText =
+                    "WARNING";
+
+                message.innerText =
+                    `${diffDays} days remaining`;
+
+            }
+
+            // =========================================
+            // SAFE
+            // =========================================
+
+            else{
+
+                pill.className =
+                    "status-pill safe";
+
+                pill.innerText =
+                    "SAFE";
+
+                message.innerText =
+                    `${diffDays} days remaining`;
+
+            }
+
+            compliancePill.className =
+                "status-pill safe";
+
+            compliancePill.innerText =
+                "VALID";
+
+            complianceMessage.innerText =
+                "Inventory ready for onboarding";
+
+            expiryDate.classList.remove(
+                "invalid"
+            );
+
+            document.getElementById(
+                "submitBtn"
+            ).disabled = false;
+        }
+
+        // =============================================
+        // STOCK ANALYSIS
+        // =============================================
+
+        function updateStockStatus(){
+
+            const stockValue =
+                parseInt(stock.value);
+
+            const minValue =
+                parseInt(minStock.value);
+
+            const pill =
+                document.getElementById(
+                    "stockStatusPill"
+                );
+
+            const message =
+                document.getElementById(
+                    "stockMessage"
+                );
+
+            if(
+                !stockValue ||
+                !minValue
+            ){
+                return;
+            }
+
+            if(stockValue <= minValue){
+
+                pill.className =
+                    "status-pill danger";
+
+                pill.innerText =
+                    "LOW";
+
+                message.innerText =
+                    "Initial stock already below threshold";
+
+                return;
+            }
+
+            if(
+                stockValue <=
+                minValue * 1.5
+            ){
+
+                pill.className =
+                    "status-pill warning";
+
+                pill.innerText =
+                    "WARNING";
+
+                message.innerText =
+                    "Inventory buffer is low";
+
+                return;
+            }
+
+            pill.className =
+                "status-pill safe";
+
+            pill.innerText =
+                "HEALTHY";
+
+            message.innerText =
+                "Inventory levels are healthy";
+        }
+
+        // =============================================
+        // ALERT SYSTEM
+        // =============================================
+
+        function showAlert(message,type){
+
+            const alertBox =
+                document.getElementById(
+                    "alertBox"
+                );
+
+            alertBox.className =
+                `alert-box alert-${type}`;
+
+            alertBox.innerHTML =
+                message;
+        }
+
+        // =============================================
+        // REGISTER MEDICINE
+        // =============================================
+
+        async function registerMedicine(){
+
+            const name =
+                medicineName.value.trim();
+
+            const stockValue =
+                parseInt(stock.value);
+
+            const minValue =
+                parseInt(minStock.value);
+
+            const expiry =
+                expiryDate.value;
+
+            const batchCode =
+                document.getElementById(
+                    "batchCodePreview"
+                ).innerText;
+
+            // =========================================
+            // VALIDATION
+            // =========================================
+
+            if(
+                !name ||
+                !stockValue ||
+                !minValue ||
+                !expiry
+            ){
+
+                showAlert(
+                    "⚠ Please fill all required fields",
+                    "error"
+                );
+
+                return;
+            }
+
+            // =========================================
+            // EXPIRED CHECK
+            // =========================================
+
+            const today =
+                new Date();
+
+            const enteredDate =
+                new Date(expiry);
+
+            if(enteredDate <= today){
+
+                showAlert(
+                    "❌ Expired medicines cannot be added to inventory",
+                    "error"
+                );
+
+                return;
+            }
+
+            try{
+
+                const response =
+                    await fetch(
+
+                        `${API_BASE_URL}/medicines`,
+
+                        {
+
+                            method:"POST",
+
+                            headers:{
+                                "Content-Type":
+                                "application/json"
+                            },
+
+                            body:JSON.stringify({
+
+                                name:name,
+
+                                stock:stockValue,
+
+                                min_stock:minValue,
+
+                                expiry_date:expiry,
+
+                                batch_code:batchCode
+                            })
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                // =====================================
+                // SUCCESS
+                // =====================================
+
+                if(response.ok){
+
+                    showAlert(
+
+                        `
+                        ✅ Medicine registered successfully
+                        <br><br>
+                        FEFO tracking activated
+                        <br>
+                        Batch: <b>${batchCode}</b>
+                        `,
+
+                        "success"
+                    );
+
+                    clearForm();
+
+                    return;
+                }
+
+                // =====================================
+                // DUPLICATE
+                // =====================================
+
+                if(response.status === 409){
+
+                    showAlert(
+
+                        `
+                        ⚠ Medicine already exists
+                        <br><br>
+                        Please use Restock instead
+                        `,
+
+                        "error"
+                    );
+
+                    return;
+                }
+
+                // =====================================
+                // OTHER ERRORS
+                // =====================================
+
+                showAlert(
+                    result.error ||
+                    "Failed to register medicine",
+                    "error"
+                );
+
+            }
+
+            catch(error){
+
+                console.error(error);
+
+                showAlert(
+                    "Server connection failed",
+                    "error"
+                );
+            }
+        }
+
+        // =============================================
+        // CLEAR FORM
+        // =============================================
+
+        function clearForm(){
+
+            medicineName.value = "";
+
+            stock.value = "";
+
+            minStock.value = "";
+
+            expiryDate.value = "";
+
+            generateBatchCode();
+        }
+
+        // =============================================
+        // GO BACK
+        // =============================================
+
+        function goBack(){
+
+            window.location.href =
+                "list_medicines.html";
+        }
+
+        // =============================================
+        // INITIALIZE
+        // =============================================
+
+        generateBatchCode();
+
+    </script>
+
+</body>
+
+</html>

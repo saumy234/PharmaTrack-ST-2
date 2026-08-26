@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+
+    <title>MediGuard Cold Chain Monitoring</title>
+
+    <!-- =========================================
+         CHART JS
+    ========================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- =========================================
+         FONT AWESOME
+    ========================================== -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        /* =========================================
+           GLOBAL RESET
+        ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --bg-card: #172033;
+            --bg-card-light: #1e293b;
+
+            --green: #4ade80;
+            --green-dark: #22c55e;
+
+            --red: #ef4444;
+            --orange: #f59e0b;
+            --yellow: #facc15;
+
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+
+            --border: rgba(255, 255, 255, 0.06);
+        }
+
+        body {
+
+            font-family: 'Segoe UI', sans-serif;
+
+            background:
+                radial-gradient(circle at top right,
+                    #172554 0%,
+                    #020617 35%),
+                linear-gradient(135deg,
+                    #020617,
+                    #0f172a,
+                    #1e293b);
+
+            color: white;
+
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           SCROLLBAR
+        ========================================== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        /* =========================================
+           MAIN CONTAINER
+        ========================================== */
+        .container {
+
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================== */
+        .sidebar {
+
+            width: 270px;
+
+            background:
+                linear-gradient(180deg,
+                    rgba(2, 6, 23, 0.98),
+                    rgba(15, 23, 42, 0.98));
+
+            padding: 24px;
+
+            border-right:
+                1px solid rgba(255, 255, 255, .06);
+
+            box-shadow:
+                10px 0 30px rgba(0, 0, 0, .35);
+
+            backdrop-filter: blur(12px);
+
+            position: sticky;
+            top: 0;
+
+            height: 100vh;
+        }
+
+        /* =========================================
+           LOGO
+        ========================================== */
+        .sidebar h3 {
+
+            color: var(--green);
+
+            font-size: 35px;
+
+            margin-bottom: 36px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           SIDEBAR LINKS
+        ========================================== */
+        .sidebar a,
+        .menu-item {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 16px 18px;
+
+            margin: 12px 0;
+
+            border-radius: 18px;
+
+            text-decoration: none;
+
+            color: var(--text-secondary);
+
+            transition: .35s ease;
+
+            cursor: pointer;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+        .menu-left {
+
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sidebar i {
+
+            width: 22px;
+            font-size: 19px;
+
+            transition: .3s ease;
+        }
+
+        .sidebar a:hover,
+        .menu-item:hover {
+
+            transform: translateX(6px);
+
+            background:
+                rgba(74, 222, 128, .08);
+
+            color: var(--green);
+
+            box-shadow:
+                0 0 18px rgba(74, 222, 128, .16);
+        }
+
+        .sidebar a:hover i,
+        .menu-item:hover i {
+
+            color: var(--green);
+        }
+
+        /* =========================================
+           SIDEBAR GLOW EFFECT
+        ========================================== */
+        .sidebar a::before,
+        .menu-item::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 0%;
+            height: 100%;
+
+            background:
+                linear-gradient(90deg,
+                    rgba(74, 222, 128, .12),
+                    transparent);
+
+            transition: .4s ease;
+        }
+
+        .sidebar a:hover::before,
+        .menu-item:hover::before {
+
+            width: 100%;
+        }
+
+        /* =========================================
+           SUBMENU
+        ========================================== */
+        .submenu {
+
+            max-height: 0;
+
+            overflow: hidden;
+
+            opacity: 0;
+
+            margin-left: 16px;
+
+            transition: all .4s ease;
+        }
+
+        .submenu.active {
+
+            max-height: 500px;
+
+            opacity: 1;
+        }
+
+        .submenu a {
+
+            font-size: 14px;
+            padding: 12px 14px;
+        }
+
+        /* =========================================
+           ARROW
+        ========================================== */
+        .arrow {
+
+            width: 12px;
+            height: 12px;
+
+            border-right: 3px solid #cbd5e1;
+            border-bottom: 3px solid #cbd5e1;
+
+            transform: rotate(45deg);
+
+            transition: .3s ease;
+        }
+
+        /* =========================================
+           MAIN CONTENT
+        ========================================== */
+        .main {
+
+            flex: 1;
+
+            padding: 34px;
+        }
+
+        /* =========================================
+           PAGE HEADER
+        ========================================== */
+        .page-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+
+            font-size: 42px;
+            font-weight: 800;
+        }
+
+        .live-badge {
+
+            padding: 10px 18px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(74, 222, 128, .12);
+
+            color: var(--green);
+
+            border:
+                1px solid rgba(74, 222, 128, .25);
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live-dot {
+
+            width: 10px;
+            height: 10px;
+
+            background: var(--green);
+
+            border-radius: 50%;
+
+            animation: pulse 1.6s infinite;
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: .5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* =========================================
+           KPI CARDS
+        ========================================== */
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 22px;
+
+            margin-bottom: 28px;
+        }
+
+        .card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(145deg,
+                    #172033,
+                    #1e293b);
+
+            border-radius: 26px;
+
+            padding: 26px;
+
+            border:
+                1px solid rgba(255, 255, 255, .06);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, .25),
+                inset 0 1px 0 rgba(255, 255, 255, .03);
+
+            transition: .35s ease;
+        }
+
+        .card:hover {
+
+            transform: translateY(-8px);
+
+            border-color:
+                rgba(74, 222, 128, .22);
+
+            box-shadow:
+                0 18px 40px rgba(0, 0, 0, .35),
+                0 0 24px rgba(74, 222, 128, .18);
+        }
+
+        .card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: -60px;
+            right: -60px;
+
+            width: 140px;
+            height: 140px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(circle,
+                    rgba(74, 222, 128, .18),
+                    transparent 70%);
+        }
+
+        .card-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 18px;
+        }
+
+        .card-header h3 {
+
+            color: var(--text-secondary);
+
+            font-size: 15px;
+
+            font-weight: 600;
+        }
+
+        .card-icon {
+
+            width: 48px;
+            height: 48px;
+
+            border-radius: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(74, 222, 128, .10);
+
+            color: var(--green);
+
+            font-size: 18px;
+        }
+
+        .card-value {
+
+            font-size: 38px;
+
+            font-weight: 800;
+
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+
+            color: var(--text-secondary);
+
+            font-size: 14px;
+        }
+
+        /* =========================================
+           DASHBOARD GRID
+        ========================================== */
+        .dashboard-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1.4fr .9fr;
+
+            gap: 24px;
+
+            margin-bottom: 24px;
+        }
+
+        /* =========================================
+           PANELS
+        ========================================== */
+        .panel {
+
+            background:
+                linear-gradient(145deg,
+                    #172033,
+                    #1e293b);
+
+            border-radius: 26px;
+
+            padding: 26px;
+
+            border:
+                1px solid rgba(255, 255, 255, .06);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, .25);
+        }
+
+        .panel-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 24px;
+        }
+
+        .panel-header h3 {
+
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* =========================================
+           ALERT PANEL
+        ========================================== */
+        .alert-panel {
+
+            background:
+                linear-gradient(145deg,
+                    rgba(55, 15, 15, 0.55),
+                    rgba(35, 10, 10, 0.45));
+
+            border:
+                1px solid rgba(248, 113, 113, 0.10);
+
+            box-shadow:
+                0 10px 35px rgba(127, 29, 29, 0.12);
+        }
+
+        .alert-list {
+
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .alert-item {
+
+            padding: 18px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(135deg,
+                    rgba(248, 113, 113, 0.14),
+                    rgba(239, 68, 68, 0.10));
+
+            border:
+                1px solid rgba(248, 113, 113, 0.18);
+
+            border-left:
+                5px solid var(--red);
+
+            transition: .3s ease;
+        }
+
+        .alert-item:hover {
+
+            transform: translateX(6px);
+
+            box-shadow:
+                0 0 22px rgba(239, 68, 68, .16);
+        }
+
+        .alert-top {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 10px;
+        }
+
+        .alert-type {
+
+            color: #fecaca;
+
+            font-weight: 700;
+
+            font-size: 15px;
+        }
+
+        .alert-time {
+
+            color: #fca5a5;
+
+            font-size: 13px;
+        }
+
+        .alert-message {
+
+            color: #ffe4e6;
+
+            line-height: 1.5;
+
+            font-size: 15px;
+        }
+
+        /* =========================================
+           TEMPERATURE STATUS
+        ========================================== */
+        .status-card {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 18px;
+        }
+
+        .status-indicator {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 18px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(74, 222, 128, .08);
+
+            border:
+                1px solid rgba(74, 222, 128, .16);
+        }
+
+        .status-icon {
+
+            width: 52px;
+            height: 52px;
+
+            border-radius: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(74, 222, 128, .12);
+
+            font-size: 20px;
+        }
+
+        .status-title {
+
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .status-description {
+
+            color: var(--text-secondary);
+
+            margin-top: 4px;
+
+            font-size: 14px;
+        }
+
+        /* =========================================
+           CHART
+        ========================================== */
+        .chart-container {
+
+            height: 420px;
+        }
+
+        /* =========================================
+           SENSOR FEED
+        ========================================== */
+        .sensor-feed {
+
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        .sensor-item {
+
+            padding: 16px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(255, 255, 255, .03);
+
+            border:
+                1px solid rgba(255, 255, 255, .05);
+
+            transition: .3s ease;
+        }
+
+        .sensor-item:hover {
+
+            background:
+                rgba(74, 222, 128, .05);
+
+            border-color:
+                rgba(74, 222, 128, .18);
+        }
+
+        .sensor-top {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 10px;
+        }
+
+        .sensor-device {
+
+            font-weight: 700;
+        }
+
+        .sensor-temp {
+
+            font-size: 18px;
+
+            font-weight: 800;
+
+            color: var(--green);
+        }
+
+        .sensor-meta {
+
+            color: var(--text-secondary);
+
+            font-size: 13px;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================== */
+        @media(max-width:1400px) {
+
+            .cards {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:900px) {
+
+            .container {
+
+                flex-direction: column;
+            }
+
+            .sidebar {
+
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .cards {
+
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- =========================================
+             SIDEBAR
+        ========================================== -->
+        <div class="sidebar">
+
+            <h3>PharmaTrack</h3>
+
+            <!-- DASHBOARD -->
+            <a href="dashboard.html">
+
+                <div class="menu-left">
+
+                    <i class="fa-solid fa-gauge-high"></i>
+
+                    <span>Dashboard</span>
+
+                </div>
+
+            </a>
+
+            <!-- INVENTORY -->
+            <div class="menu-item"
+                onclick="toggleInventoryMenu()">
+
+                <div class="menu-left">
+
+                    <i class="fa-solid fa-box"></i>
+
+                    <span>Inventory</span>
+
+                </div>
+
+                <span
+                    id="inventoryArrow"
+                    class="arrow"></span>
+
+            </div>
+
+            <!-- SUBMENU -->
+            <div
+                id="inventoryMenu"
+                class="submenu">
+
+                <a href="inventory.html">
+                    Overview
+                </a>
+
+                <a href="list_medicines.html">
+                    List of Medicines
+                </a>
+
+                <a href="add_medicine.html">
+                    Add Medicine
+                </a>
+
+                <a href="stock_report.html">
+                    Stock Report
+                </a>
+
+                <a href="sales_history.html">
+                    Sales History
+                </a>
+
+                <a href="expiry_tracking.html">
+                    Expiry Tracking
+                </a>
+
+            </div>
+
+            <!-- ANALYTICS -->
+            <a href="analytics.html">
+
+                <div class="menu-left">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    <span>Analytics</span>
+
+                </div>
+
+            </a>
+
+            <!-- PREDICTIONS -->
+            <div class="menu-item"
+                onclick="togglePredictionsMenu()">
+
+                <div class="menu-left">
+
+                    <i class="fa-solid fa-chart-simple"></i>
+
+                    <span>Predictions</span>
+
+                </div>
+
+                <span
+                    id="predictionsArrow"
+                    class="arrow"></span>
+
+            </div>
+
+            <!-- PREDICTIONS SUBMENU -->
+            <div
+                id="predictionsMenu"
+                class="submenu">
+
+                <a href="demand_prediction.html">
+                    Demand Prediction
+                </a>
+
+                <a href="reorder_suggestions.html">
+                    Reorder Suggestions
+                </a>
+
+            </div>
+
+            <!-- ALERTS -->
+            <a href="alerts.html">
+
+                <div class="menu-left">
+
+                    <i class="fa-solid fa-chart-pie"></i>
+
+                    <span>Alerts</span>
+
+                </div>
+
+            </a>
+
+            <!-- ASSISTANT -->
+            <a href="assistant.html">
+
+                <div class="menu-left">
+
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                    <span>Assistant</span>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <!-- =========================================
+             MAIN CONTENT
+        ========================================== -->
+        <div class="main">
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+                        Cold Chain Monitoring
+                    </h1>
+
+                </div>
+
+                <div class="live-badge">
+
+                    <div class="live-dot"></div>
+
+                    Live Monitoring Active
+
+                </div>
+
+            </div>
+
+            <!-- =========================================
+                 KPI CARDS
+            ========================================== -->
+            <div class="cards">
+
+                <!-- TOTAL READINGS -->
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3>Total Readings</h3>
+
+                        <div class="card-icon">
+
+                            <i class="fa-solid fa-database"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="card-value"
+                        id="totalReadings">
+
+                        0
+
+                    </div>
+
+                    <div class="card-subtitle">
+
+                        Sensor data entries received
+
+                    </div>
+
+                </div>
+
+                <!-- LATEST TEMPERATURE -->
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3>Latest Temperature</h3>
+
+                        <div class="card-icon">
+
+                            <i class="fa-solid fa-temperature-three-quarters"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="card-value"
+                        id="latestTemp">
+
+                        --°C
+
+                    </div>
+
+                    <div class="card-subtitle">
+
+                        Real-time cold chain reading
+
+                    </div>
+
+                </div>
+
+                <!-- STORAGE STATUS -->
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3>Storage Status</h3>
+
+                        <div class="card-icon">
+
+                            <i class="fa-solid fa-shield-heart"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="card-value"
+                        id="storageStatus">
+
+                        --
+
+                    </div>
+
+                    <div class="card-subtitle">
+
+                        Cold storage operational state
+
+                    </div>
+
+                </div>
+
+                <!-- ACTIVE ALERTS -->
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3>Active Alerts</h3>
+
+                        <div class="card-icon">
+
+                            <i class="fa-solid fa-bell"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="card-value"
+                        id="activeAlertsCount">
+
+                        0
+
+                    </div>
+
+                    <div class="card-subtitle">
+
+                        Unresolved operational alerts
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =========================================
+                 DASHBOARD GRID
+            ========================================== -->
+            <div class="dashboard-grid">
+
+                <!-- LEFT SIDE -->
+                <div>
+
+                    <!-- CHART PANEL -->
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <h3>
+                                Temperature Trend Analysis
+                            </h3>
+
+                        </div>
+
+                        <div class="chart-container">
+
+                            <canvas id="tempChart"></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RIGHT SIDE -->
+                <div>
+
+                    <!-- SYSTEM STATUS -->
+                    <div class="panel status-card">
+
+                        <div class="panel-header">
+
+                            <h3>
+                                System Health
+                            </h3>
+
+                        </div>
+
+                        <div
+                            id="systemStatusBox"
+                            class="status-indicator">
+
+                            <div class="status-icon">
+
+                                <i class="fa-solid fa-snowflake"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div
+                                    class="status-title"
+                                    id="statusTitle">
+
+                                    Monitoring Active
+
+                                </div>
+
+                                <div
+                                    class="status-description"
+                                    id="statusDescription">
+
+                                    Awaiting live sensor updates
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- SENSOR FEED -->
+                    <div
+                        class="panel"
+                        style="margin-top:24px;">
+
+                        <div class="panel-header">
+
+                            <h3>
+                                Recent Sensor Feed
+                            </h3>
+
+                        </div>
+
+                        <div
+                            id="sensorFeed"
+                            class="sensor-feed">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =========================================
+                 ALERT PANEL
+            ========================================== -->
+            <div class="panel alert-panel">
+
+                <div class="panel-header">
+
+                    <h3>
+                        🚨 Active Temperature Alerts
+                    </h3>
+
+                </div>
+
+                <div
+                    id="alertList"
+                    class="alert-list">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // =========================================
+        // BACKEND URL
+        // =========================================
+        const API_BASE =
+            "http://127.0.0.1:5001";
+
+        let tempChart;
+
+        // =========================================
+        // MENU TOGGLES
+        // =========================================
+        function toggleInventoryMenu() {
+
+            const menu =
+                document.getElementById(
+                    "inventoryMenu"
+                );
+
+            const arrow =
+                document.getElementById(
+                    "inventoryArrow"
+                );
+
+            menu.classList.toggle("active");
+
+            arrow.style.transform =
+                menu.classList.contains("active")
+                    ? "rotate(225deg)"
+                    : "rotate(45deg)";
+        }
+
+        function togglePredictionsMenu() {
+
+            const menu =
+                document.getElementById(
+                    "predictionsMenu"
+                );
+
+            const arrow =
+                document.getElementById(
+                    "predictionsArrow"
+                );
+
+            menu.classList.toggle("active");
+
+            arrow.style.transform =
+                menu.classList.contains("active")
+                    ? "rotate(225deg)"
+                    : "rotate(45deg)";
+        }
+
+        // =========================================
+        // FORMAT TIME
+        // =========================================
+        function formatTime(timestamp) {
+
+            if (!timestamp)
+                return "Unknown";
+
+            const date =
+                new Date(timestamp);
+
+            return date.toLocaleTimeString();
+        }
+
+        // =========================================
+        // VALIDATE TEMPERATURE
+        // =========================================
+        function isValidTemperature(temp) {
+
+            return (
+                temp !== null &&
+                temp !== undefined &&
+                temp > -50 &&
+                temp < 100
+            );
+        }
+
+        // =========================================
+        // LOAD TEMPERATURE DATA
+        // =========================================
+        async function loadTemperatureData() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_BASE}/temperature`
+                    );
+
+                const data =
+                    await response.json();
+
+                // =====================================
+                // FILTER INVALID VALUES
+                // =====================================
+                const validData =
+                    data.filter(item =>
+                        isValidTemperature(
+                            item.temperature
+                        )
+                    );
+
+                // =====================================
+                // TOTAL READINGS
+                // =====================================
+                document.getElementById(
+                    "totalReadings"
+                ).innerText =
+                    validData.length;
+
+                if (validData.length > 0) {
+
+                    const latest =
+                        validData[0];
+
+                    // =================================
+                    // LATEST TEMPERATURE
+                    // =================================
+                    document.getElementById(
+                        "latestTemp"
+                    ).innerText =
+                        `${latest.temperature}°C`;
+
+                    // =================================
+                    // STORAGE STATUS
+                    // =================================
+                    const statusEl =
+                        document.getElementById(
+                            "storageStatus"
+                        );
+
+                    const statusBox =
+                        document.getElementById(
+                            "systemStatusBox"
+                        );
+
+                    const statusTitle =
+                        document.getElementById(
+                            "statusTitle"
+                        );
+
+                    const statusDescription =
+                        document.getElementById(
+                            "statusDescription"
+                        );
+
+                    if (latest.temperature > 28) {
+
+                        statusEl.innerHTML =
+                            "⚠️ High";
+
+                        statusEl.style.color =
+                            "#f87171";
+
+                        statusTitle.innerText =
+                            "Critical Temperature";
+
+                        statusDescription.innerText =
+                            `Temperature exceeded threshold (${latest.temperature}°C)`;
+
+                        statusBox.style.background =
+                            "rgba(239,68,68,.12)";
+
+                        statusBox.style.borderColor =
+                            "rgba(239,68,68,.25)";
+
+                    }
+                    else {
+
+                        statusEl.innerHTML =
+                            "✅ Stable";
+
+                        statusEl.style.color =
+                            "#4ade80";
+
+                        statusTitle.innerText =
+                            "Cold Storage Stable";
+
+                        statusDescription.innerText =
+                            "Temperature operating within safe range";
+
+                        statusBox.style.background =
+                            "rgba(74,222,128,.08)";
+
+                        statusBox.style.borderColor =
+                            "rgba(74,222,128,.16)";
+                    }
+
+                    // =================================
+                    // SENSOR FEED
+                    // =================================
+                    renderSensorFeed(
+                        validData
+                    );
+
+                    // =================================
+                    // CHART
+                    // =================================
+                    renderChart(
+                        validData
+                    );
+                }
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Temperature API Error:",
+                    error
+                );
+            }
+        }
+
+        // =========================================
+        // RENDER SENSOR FEED
+        // =========================================
+        function renderSensorFeed(data) {
+
+            const container =
+                document.getElementById(
+                    "sensorFeed"
+                );
+
+            container.innerHTML = "";
+
+            data.slice(0, 8)
+                .forEach(item => {
+
+                    const tempColor =
+                        item.temperature > 28
+                            ? "#f87171"
+                            : "#4ade80";
+
+                    const div =
+                        document.createElement("div");
+
+                    div.className =
+                        "sensor-item";
+
+                    div.innerHTML = `
+
+                        <div class="sensor-top">
+
+                            <div class="sensor-device">
+                                ${item.device_id || "ESP32 Sensor"}
+                            </div>
+
+                            <div
+                                class="sensor-temp"
+                                style="color:${tempColor};">
+
+                                ${item.temperature}°C
+
+                            </div>
+
+                        </div>
+
+                        <div class="sensor-meta">
+
+                            Humidity:
+                            ${item.humidity || "--"}%
+                            •
+                            ${formatTime(item.timestamp)}
+
+                        </div>
+
+                    `;
+
+                    container.appendChild(div);
+                });
+        }
+
+        // =========================================
+        // RENDER CHART
+        // =========================================
+        function renderChart(data) {
+
+            if (tempChart)
+                tempChart.destroy();
+
+            const ctx =
+                document.getElementById(
+                    "tempChart"
+                ).getContext("2d");
+
+            const latestData =
+                data.slice(0, 12).reverse();
+
+            tempChart =
+                new Chart(ctx, {
+
+                    type: "line",
+
+                    data: {
+
+                        labels:
+                            latestData.map(
+                                item =>
+                                    "T" + item.id
+                            ),
+
+                        datasets: [{
+
+                            label:
+                                "Temperature (°C)",
+
+                            data:
+                                latestData.map(
+                                    item =>
+                                        item.temperature
+                                ),
+
+                            borderColor:
+                                "#4ade80",
+
+                            backgroundColor:
+                                "rgba(74,222,128,.12)",
+
+                            borderWidth: 4,
+
+                            fill: true,
+
+                            tension: 0.42,
+
+                            pointRadius: 5,
+
+                            pointHoverRadius: 8,
+
+                            pointBackgroundColor:
+                                "#4ade80",
+
+                            pointBorderColor:
+                                "#ffffff",
+
+                            pointBorderWidth: 2
+                        }]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                labels: {
+
+                                    color:
+                                        "#94a3b8",
+
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            }
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                ticks: {
+
+                                    color:
+                                        "#94a3b8"
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.04)"
+                                }
+                            },
+
+                            y: {
+
+                                ticks: {
+
+                                    color:
+                                        "#94a3b8"
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.04)"
+                                }
+                            }
+                        }
+                    }
+                });
+        }
+
+        // =========================================
+        // LOAD ALERTS
+        // =========================================
+        async function loadAlerts() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_BASE}/alerts`
+                    );
+
+                const data =
+                    await response.json();
+
+                const alertList =
+                    document.getElementById(
+                        "alertList"
+                    );
+
+                alertList.innerHTML = "";
+
+                // =====================================
+                // FILTER ACTIVE ALERTS
+                // =====================================
+                const activeAlerts =
+                    data.filter(alert =>
+                        alert.status !== "resolved"
+                    );
+
+                // =====================================
+                // ALERT COUNT
+                // =====================================
+                document.getElementById(
+                    "activeAlertsCount"
+                ).innerText =
+                    activeAlerts.length;
+
+                // =====================================
+                // NO ALERTS
+                // =====================================
+                if (activeAlerts.length === 0) {
+
+                    alertList.innerHTML = `
+
+                        <div class="alert-item"
+                            style="
+                                background:rgba(74,222,128,.08);
+                                border-left-color:#4ade80;
+                            ">
+
+                            <div class="alert-top">
+
+                                <div class="alert-type">
+                                    System Stable
+                                </div>
+
+                            </div>
+
+                            <div class="alert-message">
+
+                                No active operational alerts detected.
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                    return;
+                }
+
+                // =====================================
+                // RENDER ALERTS
+                // =====================================
+                activeAlerts
+                    .slice(0, 6)
+                    .forEach(alert => {
+
+                        const div =
+                            document.createElement("div");
+
+                        div.className =
+                            "alert-item";
+
+                        div.innerHTML = `
+
+                            <div class="alert-top">
+
+                                <div class="alert-type">
+
+                                    ${alert.type || "Temperature"} Alert
+
+                                </div>
+
+                                <div class="alert-time">
+
+                                    ${formatTime(alert.timestamp)}
+
+                                </div>
+
+                            </div>
+
+                            <div class="alert-message">
+
+                                ${alert.message}
+
+                            </div>
+
+                        `;
+
+                        alertList.appendChild(div);
+                    });
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Alert API Error:",
+                    error
+                );
+            }
+        }
+
+        // =========================================
+        // INITIAL LOAD
+        // =========================================
+        window.onload = () => {
+
+            document
+                .getElementById(
+                    "inventoryArrow"
+                )
+                .style.transform =
+                "rotate(45deg)";
+
+            document
+                .getElementById(
+                    "predictionsArrow"
+                )
+                .style.transform =
+                "rotate(45deg)";
+
+            loadTemperatureData();
+
+            loadAlerts();
+        };
+
+        // =========================================
+        // AUTO REFRESH
+        // =========================================
+        setInterval(() => {
+
+            loadTemperatureData();
+
+            loadAlerts();
+
+        }, 4000);
+
+    </script>
+
+</body>
+
+</html>
