@@ -5,7 +5,7 @@ from .api.medicines_api import bp as medicines_bp
 from .api.inventory_api import bp as inventory_bp
 from .api.sales_api import bp as sales_bp
 from .api.cold_chain_api import bp as cold_chain_bp
-
+from .api.assistant_api import bp as assistant_bp
 app = Flask(__name__)
 CORS(app)
 
@@ -13,6 +13,7 @@ app.register_blueprint(medicines_bp)
 app.register_blueprint(inventory_bp)
 app.register_blueprint(sales_bp)
 app.register_blueprint(cold_chain_bp)
+app.register_blueprint(assistant_bp)
 
 @app.get("/")
 def home():
