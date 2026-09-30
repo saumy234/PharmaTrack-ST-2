@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        PharmaTrack
+    </title>
+
+    <!-- =====================================================
+         CHART.JS
+    ====================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- =====================================================
+         FONT
+    ====================================================== -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+   =========================================================
+   ULTRA MODERN INVENTORY DASHBOARD UI
+   EXACT LAYOUT STYLE MATCH
+   ENTERPRISE DARK GLASSMORPHIC DESIGN
+   =========================================================
+========================================================= */
+
+
+        /* =========================================================
+   RESET
+========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
+   ROOT VARIABLES
+========================================================= */
+
+        :root {
+
+            --bg: #020817;
+
+            --panel: #071225;
+
+            --panel-2: #0b1730;
+
+            --border: rgba(255, 255, 255, .06);
+
+            --text: #f8fafc;
+
+            --muted: #94a3b8;
+
+            --green: #22c55e;
+
+            --yellow: #facc15;
+
+            --red: #ef4444;
+
+            --blue: #3b82f6;
+
+            --purple: #a855f7;
+
+            --cyan: #06b6d4;
+        }
+
+
+        /* =========================================================
+   BODY
+========================================================= */
+
+        body {
+
+            font-family:
+                "Inter",
+                sans-serif;
+
+            background:
+                linear-gradient(180deg,
+                    #020617,
+                    #081120,
+                    #020617);
+
+            color: var(--text);
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =========================================================
+   SCROLLBAR
+========================================================= */
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+
+            background:
+                rgba(255, 255, 255, .1);
+
+            border-radius: 999px;
+        }
+
+
+        /* =========================================================
+   DASHBOARD WRAPPER
+========================================================= */
+
+        .dashboard {
+
+            width: 100%;
+
+            max-width: 1920px;
+
+            margin: auto;
+
+            padding: 14px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 14px;
+        }
+
+
+        /* =========================================================
+   PANELS
+========================================================= */
+
+        .panel {
+
+            background:
+                linear-gradient(145deg,
+                    rgba(8, 17, 35, .98),
+                    rgba(5, 12, 26, .98));
+
+            border:
+                1px solid rgba(255, 255, 255, .05);
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            transition: all .28s ease;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, .35);
+        }
+
+        .panel:hover {
+
+            transform:
+                translateY(-2px);
+
+            border-color:
+                rgba(255, 255, 255, .08);
+        }
+
+
+        /* =========================================================
+   HEADER
+========================================================= */
+
+        .header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 18px 22px;
+        }
+
+        .header-left h1 {
+
+            font-size: 24px;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+        }
+
+        .header-left p {
+
+            margin-top: 6px;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        /* =========================================================
+   ERP STATUS
+========================================================= */
+
+        .erp-pill {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 10px 14px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(34, 197, 94, .08);
+
+            border:
+                1px solid rgba(34, 197, 94, .14);
+
+            color: var(--green);
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+        .pulse {
+
+            width: 9px;
+
+            height: 9px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: .4;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+
+        /* =========================================================
+   KPI GRID
+========================================================= */
+
+        .kpi-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 14px;
+        }
+
+
+        /* =========================================================
+   KPI CARD
+========================================================= */
+
+        .kpi {
+
+            position: relative;
+
+            min-height: 150px;
+
+            padding: 18px;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(145deg,
+                    rgba(9, 19, 39, .98),
+                    rgba(5, 12, 25, .98));
+
+            border:
+                1px solid rgba(255, 255, 255, .05);
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: space-between;
+
+            transition: all .28s ease;
+        }
+
+        .kpi::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 3px;
+
+            background:
+                linear-gradient(90deg,
+                    #22c55e,
+                    #4ade80);
+        }
+
+        .kpi.red::before {
+            background:
+                linear-gradient(90deg,
+                    #ef4444,
+                    #f87171);
+        }
+
+        .kpi.blue::before {
+            background:
+                linear-gradient(90deg,
+                    #3b82f6,
+                    #60a5fa);
+        }
+
+        .kpi.yellow::before {
+            background:
+                linear-gradient(90deg,
+                    #facc15,
+                    #fde047);
+        }
+
+        .kpi.purple::before {
+            background:
+                linear-gradient(90deg,
+                    #a855f7,
+                    #c084fc);
+        }
+
+        .kpi:hover {
+
+            transform:
+                translateY(-4px);
+
+            box-shadow:
+                0 14px 28px rgba(0, 0, 0, .35);
+        }
+
+
+        /* =========================================================
+   KPI TOP
+========================================================= */
+
+        .kpi-top {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            gap: 10px;
+        }
+
+        .kpi-left {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 12px;
+        }
+
+
+        /* =========================================================
+   KPI ICON
+========================================================= */
+
+        .kpi-icon {
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background:
+                rgba(34, 197, 94, .12);
+
+            color: var(--green);
+
+            font-size: 16px;
+        }
+
+        .kpi.red .kpi-icon {
+
+            background:
+                rgba(239, 68, 68, .12);
+
+            color: var(--red);
+        }
+
+        .kpi.blue .kpi-icon {
+
+            background:
+                rgba(59, 130, 246, .12);
+
+            color: var(--blue);
+        }
+
+        .kpi.yellow .kpi-icon {
+
+            background:
+                rgba(250, 204, 21, .12);
+
+            color: var(--yellow);
+        }
+
+        .kpi.purple .kpi-icon {
+
+            background:
+                rgba(168, 85, 247, .12);
+
+            color: var(--purple);
+        }
+
+
+        /* =========================================================
+   KPI TEXT
+========================================================= */
+
+        .kpi-title {
+
+            font-size: 10px;
+
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+
+            color: #8ea0bd;
+
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+
+            font-size: 18px;
+
+            font-weight: 800;
+
+            line-height: 1.2;
+        }
+
+        .kpi-sub {
+
+            margin-top: 4px;
+
+            font-size: 11px;
+
+            color: var(--muted);
+        }
+
+
+        /* =========================================================
+   KPI BADGE
+========================================================= */
+
+        .kpi-tag {
+
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(34, 197, 94, .12);
+
+            color: var(--green);
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+        .kpi.red .kpi-tag {
+
+            background:
+                rgba(239, 68, 68, .12);
+
+            color: var(--red);
+        }
+
+        .kpi.blue .kpi-tag {
+
+            background:
+                rgba(59, 130, 246, .12);
+
+            color: var(--blue);
+        }
+
+        .kpi.yellow .kpi-tag {
+
+            background:
+                rgba(250, 204, 21, .12);
+
+            color: var(--yellow);
+        }
+
+        .kpi.purple .kpi-tag {
+
+            background:
+                rgba(168, 85, 247, .12);
+
+            color: var(--purple);
+        }
+
+
+        /* =========================================================
+   KPI BOTTOM
+========================================================= */
+
+        .kpi-bottom {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-top: 14px;
+        }
+
+        .kpi-change {
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            color: var(--green);
+        }
+
+        .kpi.red .kpi-change {
+            color: var(--red);
+        }
+
+        .kpi.blue .kpi-change {
+            color: var(--blue);
+        }
+
+        .kpi.yellow .kpi-change {
+            color: var(--yellow);
+        }
+
+        .kpi.purple .kpi-change {
+            color: var(--purple);
+        }
+
+
+        /* =========================================================
+   MINI BAR
+========================================================= */
+
+        .mini-bar {
+
+            width: 64px;
+
+            height: 6px;
+
+            border-radius: 999px;
+
+            overflow: hidden;
+
+            background:
+                rgba(255, 255, 255, .05);
+        }
+
+        .mini-fill {
+
+            height: 100%;
+
+            border-radius: 999px;
+
+            background:
+                linear-gradient(90deg,
+                    #22c55e,
+                    #4ade80);
+        }
+
+
+        /* =========================================================
+   MAIN GRID
+========================================================= */
+
+        .main-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1.1fr .9fr;
+
+            gap: 14px;
+        }
+
+
+        /* =========================================================
+   SECTION
+========================================================= */
+
+        .section {
+
+            padding: 16px;
+        }
+
+        .section-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 14px;
+        }
+
+        .section-header h2 {
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            letter-spacing: .4px;
+        }
+
+        .section-header span {
+
+            font-size: 11px;
+
+            color: var(--muted);
+        }
+
+
+        /* =========================================================
+   ALERT STREAM
+========================================================= */
+
+        .alert-stream {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+        .alert {
+
+            position: relative;
+
+            padding: 14px 14px 14px 16px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255, 255, 255, .02);
+
+            border:
+                1px solid rgba(255, 255, 255, .04);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            transition: all .25s ease;
+        }
+
+        .alert:hover {
+
+            background:
+                rgba(255, 255, 255, .04);
+        }
+
+        .alert::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 3px;
+            height: 100%;
+
+            background: var(--green);
+        }
+
+        .alert.warning::before {
+            background: var(--yellow);
+        }
+
+        .alert.critical::before {
+            background: var(--red);
+        }
+
+        .alert.info::before {
+            background: var(--blue);
+        }
+
+        .alert-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .alert-icon {
+
+            width: 28px;
+
+            height: 28px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background:
+                rgba(255, 255, 255, .04);
+
+            font-size: 12px;
+        }
+
+        .alert h4 {
+
+            font-size: 11px;
+
+            margin-bottom: 4px;
+        }
+
+        .alert p {
+
+            font-size: 10px;
+
+            color: var(--muted);
+        }
+
+        .alert-time {
+
+            font-size: 10px;
+
+            color: var(--muted);
+        }
+
+
+        /* =========================================================
+   HEALTH LAYOUT
+========================================================= */
+
+        .health-layout {
+
+            display: grid;
+
+            grid-template-columns:
+                .8fr 1.2fr;
+
+            gap: 14px;
+        }
+
+        .health-list {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+        .health-card {
+
+            padding: 14px;
+
+            border-radius: 16px;
+
+            background:
+                rgba(255, 255, 255, .02);
+
+            border:
+                1px solid rgba(255, 255, 255, .04);
+        }
+
+        .health-card h4 {
+
+            font-size: 11px;
+
+            color: var(--muted);
+
+            margin-bottom: 10px;
+        }
+
+        .health-number {
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            margin-bottom: 14px;
+        }
+
+        .progress-track {
+
+            width: 100%;
+
+            height: 8px;
+
+            border-radius: 999px;
+
+            overflow: hidden;
+
+            background:
+                rgba(255, 255, 255, .06);
+        }
+
+        .progress-fill {
+
+            height: 100%;
+        }
+
+
+        /* =========================================================
+   CHART BOX
+========================================================= */
+
+        .chart-box {
+
+            width: 100%;
+
+            height: 100%;
+
+            min-height: 280px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+        }
+
+
+        /* =========================================================
+   ANALYTICS GRID
+========================================================= */
+
+        .analytics-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 14px;
+        }
+
+        .chart-container {
+
+            min-height: 360px;
+
+            padding: 16px;
+        }
+
+
+        /* =========================================================
+   FEFO LIST
+========================================================= */
+
+        .fefo-list {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            margin-top: 10px;
+        }
+
+        .fefo-item {
+
+            padding: 14px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255, 255, 255, .02);
+
+            border:
+                1px solid rgba(255, 255, 255, .04);
+        }
+
+        .fefo-top {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 10px;
+        }
+
+        .fefo-name {
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+        .fefo-batch {
+
+            margin-top: 4px;
+
+            font-size: 10px;
+
+            color: var(--muted);
+        }
+
+        .days {
+
+            font-size: 22px;
+
+            font-weight: 800;
+
+            color: var(--red);
+        }
+
+        .fefo-meta {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-top: 8px;
+
+            font-size: 10px;
+
+            color: var(--muted);
+        }
+
+
+        /* =========================================================
+   TABLE
+========================================================= */
+
+        .table-panel {
+
+            overflow: hidden;
+        }
+
+        .table-scroll {
+
+            overflow: auto;
+
+            max-height: 500px;
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        thead {
+
+            background:
+                rgba(255, 255, 255, .03);
+        }
+
+        th {
+
+            padding: 12px;
+
+            text-align: left;
+
+            font-size: 10px;
+
+            color: var(--muted);
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+        td {
+
+            padding: 12px;
+
+            border-top:
+                1px solid rgba(255, 255, 255, .04);
+
+            font-size: 11px;
+        }
+
+        tbody tr {
+
+            transition: all .2s ease;
+        }
+
+        tbody tr:hover {
+
+            background:
+                rgba(255, 255, 255, .03);
+        }
+
+
+        /* =========================================================
+   BADGES
+========================================================= */
+
+        .badge {
+
+            padding: 5px 10px;
+
+            border-radius: 999px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+        .healthy {
+
+            background:
+                rgba(34, 197, 94, .12);
+
+            color: var(--green);
+        }
+
+        .warning {
+
+            background:
+                rgba(250, 204, 21, .12);
+
+            color: var(--yellow);
+        }
+
+        .critical {
+
+            background:
+                rgba(239, 68, 68, .12);
+
+            color: var(--red);
+        }
+
+        .overstocked {
+
+            background:
+                rgba(59, 130, 246, .12);
+
+            color: var(--blue);
+        }
+
+
+        /* =========================================================
+   RESPONSIVE
+========================================================= */
+
+        @media(max-width:1400px) {
+
+            .kpi-grid {
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .main-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .analytics-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+        }
+
+        @media(max-width:900px) {
+
+            .dashboard {
+
+                padding: 10px;
+            }
+
+            .kpi-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .health-layout {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .chart-container {
+
+                min-height: 300px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+        <div class="header panel">
+
+            <div class="header-left">
+
+                <h1>
+                    MediGuard Inventory Command Center
+                </h1>
+
+                <p>
+                    Enterprise FEFO-aware pharmaceutical inventory operations,
+                    expiry intelligence,
+                    stock monitoring,
+                    and warehouse analytics system.
+                </p>
+
+            </div>
+
+            <div class="header-right">
+
+                <div class="erp-pill">
+
+                    <div class="pulse"></div>
+
+                    ERP LIVE
+
+                </div>
+
+                <div class="erp-pill">
+
+                    FEFO MONITORING ACTIVE
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             KPI GRID
+        ====================================================== -->
+        <div class="kpi-grid" id="kpiGrid"></div>
+
+        <!-- =====================================================
+             MAIN GRID
+        ====================================================== -->
+        <div class="main-grid">
+
+            <!-- =================================================
+                 ALERT CENTER
+            ================================================== -->
+            <div class="section panel">
+
+                <div class="section-header">
+
+                    <h2>
+                        Operational Intelligence Feed
+                    </h2>
+
+                    <span>
+                        Live ERP inventory monitoring
+                    </span>
+
+                </div>
+
+                <div class="alert-stream" id="alertStream">
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 HEALTH CENTER
+            ================================================== -->
+            <div class="section panel">
+
+                <div class="section-header">
+
+                    <h2>
+                        Inventory Risk Center
+                    </h2>
+
+                    <span>
+                        Operational classification engine
+                    </span>
+
+                </div>
+
+                <div class="health-layout">
+
+                    <div class="health-list" id="healthList">
+                    </div>
+
+                    <div class="chart-box">
+
+                        <canvas id="healthChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             ANALYTICS GRID
+        ====================================================== -->
+        <div class="analytics-grid">
+
+            <!-- =================================================
+                 STOCK ANALYTICS
+            ================================================== -->
+            <div class="section panel">
+
+                <div class="section-header">
+
+                    <h2>
+                        Stock Distribution Intelligence
+                    </h2>
+
+                    <span>
+                        Operational stock analytics
+                    </span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="stockChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 FEFO RADAR
+            ================================================== -->
+            <div class="section panel">
+
+                <div class="section-header">
+
+                    <h2>
+                        FEFO Expiry Radar
+                    </h2>
+
+                    <span>
+                        Expiry exposure intelligence
+                    </span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="fefoChart"></canvas>
+
+                </div>
+
+                <div class="fefo-list" id="fefoList" style="margin-top:20px;">
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             TABLE
+        ====================================================== -->
+        <div class="panel table-panel">
+
+            <div class="section-header" style="padding:22px 22px 0;">
+
+                <h2>
+                    Inventory Operations Grid
+                </h2>
+
+                <span>
+                    Enterprise inventory execution layer
+                </span>
+
+            </div>
+
+            <div class="table-scroll">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Medicine</th>
+
+                            <th>Stock</th>
+
+                            <th>Min Stock</th>
+
+                            <th>Health</th>
+
+                            <th>Batch Count</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tableBody"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const API =
+            "http://127.0.0.1:5001";
+
+        let stockChart;
+        let fefoChart;
+        let healthChart;
+
+        /* =====================================================
+           FETCH
+        ====================================================== */
+
+        async function getData(endpoint) {
+
+            const response =
+                await fetch(`${API}${endpoint}`);
+
+            return await response.json();
+        }
+
+        /* =====================================================
+           KPI SYSTEM
+        ====================================================== */
+
+        function createKPI(
+            title,
+            value,
+            sub,
+            tag,
+            progress
+        ) {
+
+            return `
+
+                <div class="kpi panel">
+
+                    <div class="kpi-top">
+
+                        <div class="kpi-title">
+                            ${title}
+                        </div>
+
+                        <div class="kpi-tag">
+                            ${tag}
+                        </div>
+
+                    </div>
+
+                    <div class="kpi-value">
+                        ${value}
+                    </div>
+
+                    <div class="kpi-bottom">
+
+                        <div class="kpi-sub">
+                            ${sub}
+                        </div>
+
+                        <div class="mini-bar">
+
+                            <div class="mini-fill"
+                                style="
+                                    width:${progress}%;
+                                ">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        }
+
+        async function loadKPIs() {
+
+            const data =
+                await getData(
+                    "/inventory/analytics"
+                );
+
+            document.getElementById(
+                "kpiGrid"
+            ).innerHTML = `
+
+                ${createKPI(
+                "Total Inventory Units",
+                data.total_inventory_units,
+                "Active pharmaceutical stock",
+                "LIVE",
+                88
+            )}
+
+                ${createKPI(
+                "Inventory Health Score",
+                data.inventory_health_score + "%",
+                "Operational inventory quality",
+                "HEALTH",
+                data.inventory_health_score
+            )}
+
+                ${createKPI(
+                "Critical Risk Medicines",
+                data.critical_risk_count,
+                "Immediate intervention required",
+                "RISK",
+                35
+            )}
+
+                ${createKPI(
+                "Overstocked Medicines",
+                data.overstock_count,
+                "Warehouse optimization opportunity",
+                "STORAGE",
+                60
+            )}
+
+                ${createKPI(
+                "Low Stock Count",
+                data.low_stock_count,
+                "Replenishment monitoring",
+                "SUPPLY",
+                40
+            )}
+
+                ${createKPI(
+                "Highest Stock Medicine",
+                data.highest_stock_medicine,
+                "Peak stock concentration",
+                "TOP",
+                90
+            )}
+
+                ${createKPI(
+                "Lowest Stock Medicine",
+                data.lowest_stock_medicine,
+                "Potential depletion risk",
+                "LOW",
+                25
+            )}
+
+                ${createKPI(
+                "Total Medicines",
+                data.total_medicines,
+                "Active ERP medicines",
+                "ERP",
+                72
+            )}
+            `;
+        }
+
+        /* =====================================================
+           ALERT CENTER
+        ====================================================== */
+
+        async function loadAlerts() {
+
+            const data =
+                await getData(
+                    "/inventory/alerts"
+                );
+
+            const stream =
+                document.getElementById(
+                    "alertStream"
+                );
+
+            if (data.length === 0) {
+
+                stream.innerHTML = `
+
+                    <div class="alert">
+
+                        <h4>
+                            ✅ Inventory Stable
+                        </h4>
+
+                        <p>
+                            No operational inventory
+                            risks detected.
+                        </p>
+
+                    </div>
+                `;
+
+                return;
+            }
+
+            stream.innerHTML =
+                data.map(item => `
+
+                    <div class="
+                        alert
+                        ${item.severity}
+                    ">
+
+                        <h4>
+                            ${item.title}
+                        </h4>
+
+                        <p>
+                            ${item.message}
+                        </p>
+
+                    </div>
+                `).join("");
+        }
+
+        /* =====================================================
+           HEALTH CENTER
+        ====================================================== */
+
+        async function loadHealth() {
+
+            const data =
+                await getData(
+                    "/inventory/analytics"
+                );
+
+            const health =
+                data.health_breakdown;
+
+            document.getElementById(
+                "healthList"
+            ).innerHTML = `
+
+                ${createHealthCard(
+                "Healthy",
+                health.healthy,
+                "#22c55e",
+                70
+            )}
+
+                ${createHealthCard(
+                "Warning",
+                health.warning,
+                "#facc15",
+                30
+            )}
+
+                ${createHealthCard(
+                "Critical",
+                health.critical,
+                "#ef4444",
+                20
+            )}
+
+                ${createHealthCard(
+                "Overstocked",
+                health.overstocked,
+                "#38bdf8",
+                60
+            )}
+            `;
+
+            renderHealthChart(health);
+        }
+
+        function createHealthCard(
+            title,
+            value,
+            color,
+            width
+        ) {
+
+            return `
+
+                <div class="health-card">
+
+                    <div class="health-card-top">
+
+                        <h4>
+                            ${title}
+                        </h4>
+
+                        <div style="
+                            color:${color};
+                            font-weight:700;
+                        ">
+                            ACTIVE
+                        </div>
+
+                    </div>
+
+                    <div class="health-number">
+                        ${value}
+                    </div>
+
+                    <div class="progress-track">
+
+                        <div class="progress-fill"
+                            style="
+                                width:${width}%;
+                                background:${color};
+                            ">
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        }
+
+        function renderHealthChart(data) {
+
+            const ctx =
+                document.getElementById(
+                    "healthChart"
+                );
+
+            if (healthChart) {
+
+                healthChart.destroy();
+            }
+
+            healthChart =
+                new Chart(ctx, {
+
+                    type: "doughnut",
+
+                    data: {
+
+                        labels: [
+                            "Healthy",
+                            "Warning",
+                            "Critical",
+                            "Overstocked"
+                        ],
+
+                        datasets: [{
+
+                            data: [
+
+                                data.healthy,
+                                data.warning,
+                                data.critical,
+                                data.overstocked
+                            ],
+
+                            backgroundColor: [
+
+                                "#22c55e",
+                                "#facc15",
+                                "#ef4444",
+                                "#38bdf8"
+                            ],
+
+                            borderWidth: 0,
+
+                            cutout: "68%"
+                        }]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                position: "bottom",
+
+                                labels: {
+
+                                    color: "#94a3b8",
+
+                                    padding: 18
+                                }
+                            }
+                        }
+                    }
+                });
+        }
+
+        /* =====================================================
+           STOCK CHART
+        ====================================================== */
+
+        async function loadStockChart() {
+
+            const data =
+                await getData(
+                    "/inventory/distribution"
+                );
+
+            const ctx =
+                document.getElementById(
+                    "stockChart"
+                );
+
+            if (stockChart) {
+
+                stockChart.destroy();
+            }
+
+            stockChart =
+                new Chart(ctx, {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels:
+                            data.map(x =>
+                                x.medicine
+                            ),
+
+                        datasets: [{
+
+                            data:
+                                data.map(x =>
+                                    x.stock
+                                ),
+
+                            backgroundColor:
+                                data.map(x =>
+                                    x.color
+                                ),
+
+                            borderRadius: 10
+                        }]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                display: false
+                            }
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                ticks: {
+
+                                    color:
+                                        "#94a3b8"
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.04)"
+                                }
+                            },
+
+                            y: {
+
+                                ticks: {
+
+                                    color:
+                                        "#94a3b8"
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.04)"
+                                }
+                            }
+                        }
+                    }
+                });
+        }
+
+        /* =====================================================
+           FEFO
+        ====================================================== */
+
+        async function loadFEFO() {
+
+            const data =
+                await getData(
+                    "/inventory/fefo-risk"
+                );
+
+            const batches =
+                data.near_expiry_batches;
+
+            renderFEFOChart(batches);
+
+            const list =
+                document.getElementById(
+                    "fefoList"
+                );
+
+            if (batches.length === 0) {
+
+                list.innerHTML = `
+
+                    <div class="fefo-item">
+
+                        <div class="fefo-name">
+                            ✅ No expiry risk detected
+                        </div>
+
+                    </div>
+                `;
+
+                return;
+            }
+
+            list.innerHTML =
+                batches.map(item => {
+
+                    const risk =
+                        Math.min(
+                            100,
+                            100 - item.days_remaining
+                        );
+
+                    return `
+
+                        <div class="fefo-item">
+
+                            <div class="fefo-top">
+
+                                <div>
+
+                                    <div class="fefo-name">
+                                        ${item.medicine}
+                                    </div>
+
+                                    <div class="fefo-batch">
+                                        Batch:
+                                        ${item.batch_code}
+                                    </div>
+
+                                </div>
+
+                                <div class="days">
+                                    ${item.days_remaining}d
+                                </div>
+
+                            </div>
+
+                            <div class="progress-track">
+
+                                <div class="progress-fill"
+                                    style="
+                                        width:${risk}%;
+                                        background:
+                                            linear-gradient(
+                                                90deg,
+                                                #ef4444,
+                                                #facc15
+                                            );
+                                    ">
+                                </div>
+
+                            </div>
+
+                            <div class="fefo-meta">
+
+                                <span>
+                                    Quantity:
+                                    ${item.quantity}
+                                </span>
+
+                                <span>
+                                    FEFO PRIORITY
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+                }).join("");
+        }
+
+        function renderFEFOChart(data) {
+
+            const ctx =
+                document.getElementById(
+                    "fefoChart"
+                );
+
+            if (fefoChart) {
+
+                fefoChart.destroy();
+            }
+
+            fefoChart =
+                new Chart(ctx, {
+
+                    type: "pie",
+
+                    data: {
+
+                        labels:
+                            data.map(x =>
+                                x.medicine
+                            ),
+
+                        datasets: [{
+
+                            data:
+                                data.map(x =>
+                                    x.quantity
+                                ),
+
+                            backgroundColor: [
+
+                                "#ef4444",
+                                "#f97316",
+                                "#facc15",
+                                "#38bdf8",
+                                "#8b5cf6",
+                                "#22c55e"
+                            ],
+
+                            borderWidth: 0
+                        }]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                position: "bottom",
+
+                                labels: {
+
+                                    color: "#94a3b8",
+
+                                    padding: 18
+                                }
+                            }
+                        }
+                    }
+                });
+        }
+
+        /* =====================================================
+           TABLE
+        ====================================================== */
+
+        async function loadTable() {
+
+            const data =
+                await getData(
+                    "/medicines"
+                );
+
+            document.getElementById(
+                "tableBody"
+            ).innerHTML =
+                data.map(item => {
+
+                    let status =
+                        "healthy";
+
+                    if (
+                        item.stock <=
+                        item.min_stock
+                    ) {
+
+                        status = "critical";
+                    }
+
+                    else if (
+                        item.stock <=
+                        item.min_stock * 1.5
+                    ) {
+
+                        status = "warning";
+                    }
+
+                    else if (
+                        item.stock >=
+                        item.min_stock * 5
+                    ) {
+
+                        status = "overstocked";
+                    }
+
+                    return `
+
+                        <tr>
+
+                            <td>
+                                ${item.id}
+                            </td>
+
+                            <td>
+                                ${item.name}
+                            </td>
+
+                            <td>
+                                ${item.stock}
+                            </td>
+
+                            <td>
+                                ${item.min_stock}
+                            </td>
+
+                            <td>
+
+                                <span class="
+                                    badge
+                                    ${status}
+                                ">
+
+                                    ${status.toUpperCase()}
+
+                                </span>
+
+                            </td>
+
+                            <td>
+                                ${item.batches.length}
+                            </td>
+
+                        </tr>
+                    `;
+                }).join("");
+        }
+
+        /* =====================================================
+           INIT
+        ====================================================== */
+
+        async function init() {
+
+            await Promise.all([
+
+                loadKPIs(),
+
+                loadAlerts(),
+
+                loadHealth(),
+
+                loadStockChart(),
+
+                loadFEFO(),
+
+                loadTable()
+            ]);
+        }
+
+        init();
+
+    </script>
+
+</body>
+
+</html>
