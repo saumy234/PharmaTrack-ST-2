@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PharmaTrack</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* =====================================================
+           GLOBAL RESET
+        ===================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* =====================================================
+           BODY
+        ===================================================== */
+        body {
+
+            font-family: "Segoe UI", sans-serif;
+
+            background:
+                radial-gradient(circle at top right,
+                    #172554 0%,
+                    #020617 35%),
+                linear-gradient(135deg,
+                    #020617,
+                    #0f172a,
+                    #1e293b);
+
+            color: white;
+
+            min-height: 100vh;
+        }
+
+        /* =====================================================
+           MAIN WRAPPER
+        ===================================================== */
+        .wrapper {
+
+            width: 100%;
+
+            max-width: 1650px;
+
+            margin: auto;
+
+            padding: 30px;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+        .header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 28px;
+        }
+
+        .header-left h1 {
+
+            font-size: 42px;
+
+            font-weight: 800;
+
+            margin-bottom: 10px;
+        }
+
+        .header-left p {
+
+            color: #94a3b8;
+
+            font-size: 15px;
+        }
+
+        .live-indicator {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 12px 18px;
+
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, .05);
+
+            border: 1px solid rgba(74, 222, 128, .15);
+
+            backdrop-filter: blur(12px);
+        }
+
+        .pulse {
+
+            width: 10px;
+
+            height: 10px;
+
+            border-radius: 50%;
+
+            background: #4ade80;
+
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: .5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* =====================================================
+           HERO KPI GRID
+        ===================================================== */
+        .hero-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                2fr 2fr 1.5fr 1.5fr;
+
+            gap: 22px;
+
+            margin-bottom: 28px;
+        }
+
+        .hero-card {
+
+            background:
+                linear-gradient(145deg,
+                    #172033,
+                    #1e293b);
+
+            border-radius: 24px;
+
+            padding: 28px;
+
+            border: 1px solid rgba(255, 255, 255, .05);
+
+            position: relative;
+
+            overflow: hidden;
+
+            transition: .35s ease;
+        }
+
+        .hero-card:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 0 22px rgba(74, 222, 128, .14),
+                0 12px 28px rgba(0, 0, 0, .30);
+        }
+
+        .hero-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 4px;
+
+            background: linear-gradient(90deg,
+                    #4ade80,
+                    #22c55e);
+        }
+
+        .hero-label {
+
+            color: #94a3b8;
+
+            margin-bottom: 14px;
+
+            font-size: 14px;
+        }
+
+        .hero-value {
+
+            font-size: 42px;
+
+            font-weight: 800;
+
+            color: #4ade80;
+
+            margin-bottom: 12px;
+        }
+
+        .hero-sub {
+
+            color: #cbd5e1;
+
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           SECONDARY KPI GRID
+        ===================================================== */
+        .secondary-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 28px;
+        }
+
+        .mini-card {
+
+            background:
+                linear-gradient(145deg,
+                    #172033,
+                    #1e293b);
+
+            border-radius: 20px;
+
+            padding: 22px;
+
+            border: 1px solid rgba(255, 255, 255, .05);
+
+            transition: .3s ease;
+        }
+
+        .mini-card:hover {
+
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 0 18px rgba(74, 222, 128, .12);
+        }
+
+        .mini-card h4 {
+
+            color: #94a3b8;
+
+            margin-bottom: 12px;
+
+            font-size: 14px;
+        }
+
+        .mini-card h2 {
+
+            font-size: 24px;
+
+            color: #4ade80;
+        }
+
+        /* =====================================================
+           SEARCH + FILTERS
+        ===================================================== */
+        .toolbar {
+
+            display: flex;
+
+            gap: 18px;
+
+            margin-bottom: 28px;
+        }
+
+        .toolbar input,
+        .toolbar select {
+
+            flex: 1;
+
+            padding: 16px 18px;
+
+            border-radius: 16px;
+
+            border: 1px solid rgba(74, 222, 128, .10);
+
+            background: #0f172a;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+        .toolbar input:focus,
+        .toolbar select:focus {
+
+            border-color: #4ade80;
+
+            box-shadow:
+                0 0 16px rgba(74, 222, 128, .15);
+        }
+
+        /* =====================================================
+           MAIN DASHBOARD GRID
+        ===================================================== */
+        .dashboard-grid {
+
+            display: grid;
+
+            grid-template-columns: 2fr 1fr;
+
+            gap: 24px;
+
+            margin-bottom: 28px;
+        }
+
+        /* =====================================================
+           PANELS
+        ===================================================== */
+        .panel {
+
+            background:
+                linear-gradient(145deg,
+                    #172033,
+                    #1e293b);
+
+            border-radius: 24px;
+
+            padding: 24px;
+
+            border: 1px solid rgba(255, 255, 255, .05);
+
+            transition: .3s ease;
+        }
+
+        .panel:hover {
+
+            box-shadow:
+                0 0 20px rgba(74, 222, 128, .10);
+        }
+
+        .panel-title {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 22px;
+        }
+
+        .panel-title h3 {
+
+            font-size: 20px;
+        }
+
+        .panel-title span {
+
+            color: #94a3b8;
+
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           CHARTS
+        ===================================================== */
+        .chart-container {
+
+            height: 320px;
+        }
+
+        /* =====================================================
+           TRANSACTION GRID
+        ===================================================== */
+        .table-wrapper {
+
+            max-height: 500px;
+
+            overflow-y: auto;
+
+            border-radius: 18px;
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        thead {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 10;
+        }
+
+        th {
+
+            background: #0f172a;
+
+            color: #4ade80;
+
+            padding: 16px;
+
+            font-size: 13px;
+        }
+
+        td {
+
+            padding: 16px;
+
+            text-align: center;
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, .04);
+        }
+
+        tbody tr {
+
+            transition: .25s ease;
+        }
+
+        tbody tr:hover {
+
+            background:
+                rgba(74, 222, 128, .05);
+        }
+
+        /* =====================================================
+           STATUS BADGES
+        ===================================================== */
+        .status-badge {
+
+            padding: 8px 12px;
+
+            border-radius: 999px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+        .status-success {
+
+            background:
+                rgba(74, 222, 128, .15);
+
+            color: #4ade80;
+        }
+
+        /* =====================================================
+           ACTIVITY FEED
+        ===================================================== */
+        .activity-feed {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 16px;
+
+            max-height: 500px;
+
+            overflow-y: auto;
+        }
+
+        .activity-item {
+
+            background:
+                rgba(255, 255, 255, .03);
+
+            border-radius: 18px;
+
+            padding: 18px;
+
+            border-left: 4px solid #4ade80;
+
+            transition: .3s ease;
+        }
+
+        .activity-item:hover {
+
+            transform: translateX(5px);
+
+            box-shadow:
+                0 0 14px rgba(74, 222, 128, .10);
+        }
+
+        .activity-item h4 {
+
+            margin-bottom: 10px;
+
+            color: #4ade80;
+        }
+
+        .activity-item p {
+
+            color: #cbd5e1;
+
+            margin-bottom: 10px;
+
+            line-height: 1.5;
+        }
+
+        .activity-item small {
+
+            color: #94a3b8;
+        }
+
+        /* =====================================================
+           BOTTOM GRID
+        ===================================================== */
+        .bottom-grid {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 24px;
+        }
+
+        /* =====================================================
+           INSIGHT CARDS
+        ===================================================== */
+        .insight-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 18px;
+        }
+
+        .insight-card {
+
+            background:
+                rgba(255, 255, 255, .03);
+
+            border-radius: 18px;
+
+            padding: 20px;
+
+            border: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .insight-card h4 {
+
+            color: #94a3b8;
+
+            margin-bottom: 12px;
+        }
+
+        .insight-card h2 {
+
+            color: #4ade80;
+
+            font-size: 22px;
+        }
+
+        /* =====================================================
+           FEFO RISK PANEL
+        ===================================================== */
+        .risk-list {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 16px;
+        }
+
+        .risk-item {
+
+            background:
+                rgba(255, 255, 255, .03);
+
+            border-radius: 16px;
+
+            padding: 18px;
+
+            border-left: 4px solid #f59e0b;
+        }
+
+        .risk-item h4 {
+
+            color: #facc15;
+
+            margin-bottom: 8px;
+        }
+
+        .risk-item p {
+
+            color: #cbd5e1;
+
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+        @media(max-width:1400px) {
+
+            .hero-grid {
+
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .secondary-grid {
+
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid,
+            .bottom-grid {
+
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:900px) {
+
+            .hero-grid,
+            .secondary-grid,
+            .insight-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+
+                flex-direction: column;
+            }
+
+            .header {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 18px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+        <div class="header">
+
+            <div class="header-left">
+
+                <h1>Sales Intelligence Center</h1>
+
+                <p>
+                    Enterprise FEFO analytics,
+                    operational movement intelligence,
+                    and real-time pharmacy sales monitoring.
+                </p>
+
+            </div>
+
+            <div class="live-indicator">
+
+                <div class="pulse"></div>
+
+                <span>ERP Analytics Active</span>
+
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             HERO KPI SECTION
+        ================================================== -->
+        <div class="hero-grid">
+
+            <div class="hero-card">
+
+                <div class="hero-label">
+                    Estimated Revenue
+                </div>
+
+                <div class="hero-value" id="revenue">
+                    ₹0
+                </div>
+
+                <div class="hero-sub">
+                    Backend-driven operational revenue intelligence
+                </div>
+
+            </div>
+
+            <div class="hero-card">
+
+                <div class="hero-label">
+                    Units Sold
+                </div>
+
+                <div class="hero-value" id="unitsSold">
+                    0
+                </div>
+
+                <div class="hero-sub">
+                    Total medicine movement across all transactions
+                </div>
+
+            </div>
+
+            <div class="hero-card">
+
+                <div class="hero-label">
+                    FEFO Risk Exposure
+                </div>
+
+                <div class="hero-value" id="fefoRisk">
+                    0
+                </div>
+
+                <div class="hero-sub">
+                    Near-expiry operational exposure
+                </div>
+
+            </div>
+
+            <div class="hero-card">
+
+                <div class="hero-label">
+                    Total Sales Records
+                </div>
+
+                <div class="hero-value" id="totalSales">
+                    0
+                </div>
+
+                <div class="hero-sub">
+                    Historical ERP transaction count
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             SECONDARY KPIs
+        ================================================== -->
+        <div class="secondary-grid">
+
+            <div class="mini-card">
+                <h4>Top Selling Medicine</h4>
+                <h2 id="topSelling">--</h2>
+            </div>
+
+            <div class="mini-card">
+                <h4>Peak Sales Day</h4>
+                <h2 id="peakDay">--</h2>
+            </div>
+
+            <div class="mini-card">
+                <h4>Fastest Moving</h4>
+                <h2 id="fastestMoving">--</h2>
+            </div>
+
+            <div class="mini-card">
+                <h4>Average Units/Sale</h4>
+                <h2 id="avgUnits">0</h2>
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             SEARCH TOOLBAR
+        ================================================== -->
+        <div class="toolbar">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Search medicine transaction..." />
+
+            <select id="sortFilter">
+
+                <option value="latest">
+                    Latest Transactions
+                </option>
+
+                <option value="highest">
+                    Highest Quantity
+                </option>
+
+                <option value="lowest">
+                    Lowest Quantity
+                </option>
+
+            </select>
+
+        </div>
+
+        <!-- =================================================
+             MAIN DASHBOARD GRID
+        ================================================== -->
+        <div class="dashboard-grid">
+
+            <!-- =============================================
+                 SALES CHART
+            ============================================== -->
+            <div class="panel">
+
+                <div class="panel-title">
+
+                    <h3>Daily Sales Movement</h3>
+
+                    <span>
+                        Backend Analytics API
+                    </span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="salesTrendChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- =============================================
+                 ACTIVITY FEED
+            ============================================== -->
+            <div class="panel">
+
+                <div class="panel-title">
+
+                    <h3>Operational Activity</h3>
+
+                    <span>
+                        Live ERP Feed
+                    </span>
+
+                </div>
+
+                <div
+                    class="activity-feed"
+                    id="activityFeed">
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             TRANSACTION CENTER
+        ================================================== -->
+        <div class="panel" style="margin-bottom: 28px;">
+
+            <div class="panel-title">
+
+                <h3>Enterprise Transaction Grid</h3>
+
+                <span>
+                    FEFO Sales Tracking
+                </span>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Medicine</th>
+
+                            <th>Quantity</th>
+
+                            <th>Status</th>
+
+                            <th>Timestamp</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tableBody"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             BOTTOM ANALYTICS
+        ================================================== -->
+        <div class="bottom-grid">
+
+            <!-- =============================================
+                 MOVEMENT INSIGHTS
+            ============================================== -->
+            <div class="panel">
+
+                <div class="panel-title">
+
+                    <h3>Inventory Movement Intelligence</h3>
+
+                    <span>
+                        Operational Analytics
+                    </span>
+
+                </div>
+
+                <div class="insight-grid" id="movementInsights"></div>
+
+            </div>
+
+            <!-- =============================================
+                 FEFO ANALYSIS
+            ============================================== -->
+            <div class="panel">
+
+                <div class="panel-title">
+
+                    <h3>FEFO Risk Analysis</h3>
+
+                    <span>
+                        Expiry Intelligence
+                    </span>
+
+                </div>
+
+                <div class="risk-list" id="riskList"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // =====================================================
+        // API BASE URL
+        // =====================================================
+        const API_BASE =
+            "http://127.0.0.1:5001";
+
+        // =====================================================
+        // GLOBAL DATA
+        // =====================================================
+        let allSales = [];
+
+        let salesTrendChart;
+
+        // =====================================================
+        // INITIALIZE ERP DASHBOARD
+        // =====================================================
+        async function initializeDashboard() {
+
+            await Promise.all([
+
+                loadAnalytics(),
+
+                loadSales(),
+
+                loadSalesTrends(),
+
+                loadActivityFeed(),
+
+                loadMovementAnalytics(),
+
+                loadFefoAnalysis()
+
+            ]);
+        }
+
+        // =====================================================
+        // LOAD SALES ANALYTICS
+        // =====================================================
+        async function loadAnalytics() {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/sales/analytics`
+                );
+
+                const data = await response.json();
+
+                document.getElementById(
+                    "revenue"
+                ).innerText =
+                    `₹${data.estimated_revenue}`;
+
+                document.getElementById(
+                    "unitsSold"
+                ).innerText =
+                    data.total_units_sold;
+
+                document.getElementById(
+                    "totalSales"
+                ).innerText =
+                    data.total_sales_records;
+
+                document.getElementById(
+                    "topSelling"
+                ).innerText =
+                    data.top_selling_medicine;
+
+                document.getElementById(
+                    "peakDay"
+                ).innerText =
+                    data.peak_sales_day;
+
+                document.getElementById(
+                    "fastestMoving"
+                ).innerText =
+                    data.fastest_moving;
+
+                document.getElementById(
+                    "avgUnits"
+                ).innerText =
+                    data.average_units_per_sale;
+
+                document.getElementById(
+                    "fefoRisk"
+                ).innerText =
+                    data.highest_consumption_risk;
+
+            } catch (error) {
+
+                console.error(
+                    "Analytics loading failed",
+                    error
+                );
+            }
+        }
+
+        // =====================================================
+        // LOAD SALES TABLE
+        // =====================================================
+        async function loadSales() {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/sales`
+                );
+
+                const data = await response.json();
+
+                allSales = data;
+
+                renderSalesTable(data);
+
+            } catch (error) {
+
+                console.error(
+                    "Sales loading failed",
+                    error
+                );
+            }
+        }
+
+        // =====================================================
+        // RENDER SALES TABLE
+        // =====================================================
+        function renderSalesTable(data) {
+
+            const table =
+                document.getElementById(
+                    "tableBody"
+                );
+
+            table.innerHTML = "";
+
+            data.forEach((sale) => {
+
+                table.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            #${sale.id}
+                        </td>
+
+                        <td>
+                            ${sale.name}
+                        </td>
+
+                        <td>
+                            ${sale.quantity}
+                        </td>
+
+                        <td>
+
+                            <span class="
+                                status-badge
+                                status-success
+                            ">
+                                FEFO Processed
+                            </span>
+
+                        </td>
+
+                        <td>
+                            ${sale.timestamp}
+                        </td>
+
+                    </tr>
+                `;
+            });
+        }
+
+        // =====================================================
+        // LOAD SALES TRENDS
+        // =====================================================
+        async function loadSalesTrends() {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/sales/trends`
+                );
+
+                const data = await response.json();
+
+                renderSalesTrendChart(
+                    data.daily_sales
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Trend loading failed",
+                    error
+                );
+            }
+        }
+
+        // =====================================================
+        // SALES TREND CHART
+        // =====================================================
+        function renderSalesTrendChart(data) {
+
+            const ctx =
+                document.getElementById(
+                    "salesTrendChart"
+                );
+
+            if (salesTrendChart) {
+
+                salesTrendChart.destroy();
+            }
+
+            salesTrendChart =
+                new Chart(ctx, {
+
+                    type: "line",
+
+                    data: {
+
+                        labels:
+                            data.map(item => item.date),
+
+                        datasets: [{
+
+                            label:
+                                "Units Sold",
+
+                            data:
+                                data.map(item => item.units),
+
+                            borderColor:
+                                "#4ade80",
+
+                            backgroundColor:
+                                "rgba(74,222,128,.12)",
+
+                            fill: true,
+
+                            tension: .4,
+
+                            pointRadius: 5,
+
+                            pointHoverRadius: 8
+                        }]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                labels: {
+
+                                    color: "white"
+                                }
+                            }
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                ticks: {
+
+                                    color: "#cbd5e1"
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.04)"
+                                }
+                            },
+
+                            y: {
+
+                                ticks: {
+
+                                    color: "#cbd5e1"
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.04)"
+                                }
+                            }
+                        }
+                    }
+                });
+        }
+
+        // =====================================================
+        // LOAD ACTIVITY FEED
+        // =====================================================
+        async function loadActivityFeed() {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/sales/activity`
+                );
+
+                const data = await response.json();
+
+                const feed =
+                    document.getElementById(
+                        "activityFeed"
+                    );
+
+                feed.innerHTML = "";
+
+                data.forEach((item) => {
+
+                    feed.innerHTML += `
+
+                        <div class="activity-item">
+
+                            <h4>
+                                ⚡ ${item.title}
+                            </h4>
+
+                            <p>
+                                ${item.message}
+                            </p>
+
+                            <small>
+                                ${item.timestamp}
+                            </small>
+
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+
+                console.error(
+                    "Activity loading failed",
+                    error
+                );
+            }
+        }
+
+        // =====================================================
+        // LOAD MOVEMENT ANALYTICS
+        // =====================================================
+        async function loadMovementAnalytics() {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/inventory/movement`
+                );
+
+                const data = await response.json();
+
+                const container =
+                    document.getElementById(
+                        "movementInsights"
+                    );
+
+                container.innerHTML = "";
+
+                data.slice(0, 4).forEach((item) => {
+
+                    container.innerHTML += `
+
+                        <div class="insight-card">
+
+                            <h4>
+                                ${item.medicine}
+                            </h4>
+
+                            <h2>
+                                ${item.movement_score}
+                            </h2>
+
+                            <p style="
+                                margin-top:10px;
+                                color:#cbd5e1;
+                                font-size:13px;
+                            ">
+                                Units Sold:
+                                ${item.units_sold}
+                                <br>
+                                Current Stock:
+                                ${item.current_stock}
+                            </p>
+
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+
+                console.error(
+                    "Movement loading failed",
+                    error
+                );
+            }
+        }
+
+        // =====================================================
+        // LOAD FEFO ANALYSIS
+        // =====================================================
+        async function loadFefoAnalysis() {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/sales/fefo-analysis`
+                );
+
+                const data = await response.json();
+
+                const container =
+                    document.getElementById(
+                        "riskList"
+                    );
+
+                container.innerHTML = "";
+
+                if (
+                    data.near_expiry_batches.length === 0
+                ) {
+
+                    container.innerHTML = `
+                        <div class="risk-item">
+
+                            <h4>
+                                ✅ No Critical FEFO Risk
+                            </h4>
+
+                            <p>
+                                Inventory currently safe
+                                from immediate expiry exposure.
+                            </p>
+
+                        </div>
+                    `;
+
+                    return;
+                }
+
+                data.near_expiry_batches
+                    .slice(0, 5)
+                    .forEach((item) => {
+
+                        container.innerHTML += `
+
+                            <div class="risk-item">
+
+                                <h4>
+                                    ${item.medicine}
+                                </h4>
+
+                                <p>
+
+                                    Batch:
+                                    ${item.batch_code}
+
+                                    <br><br>
+
+                                    Quantity:
+                                    ${item.quantity}
+
+                                    <br><br>
+
+                                    Expiry:
+                                    ${item.expiry_date}
+
+                                    <br><br>
+
+                                    Remaining:
+                                    ${item.days_remaining} days
+
+                                </p>
+
+                            </div>
+                        `;
+                    });
+
+            } catch (error) {
+
+                console.error(
+                    "FEFO analysis failed",
+                    error
+                );
+            }
+        }
+
+        // =====================================================
+        // SEARCH FILTER
+        // =====================================================
+        document
+            .getElementById("searchInput")
+            .addEventListener("input", function () {
+
+                const value =
+                    this.value.toLowerCase();
+
+                const filtered =
+                    allSales.filter(sale =>
+                        sale.name
+                            .toLowerCase()
+                            .includes(value)
+                    );
+
+                renderSalesTable(filtered);
+            });
+
+        // =====================================================
+        // SORT FILTER
+        // =====================================================
+        document
+            .getElementById("sortFilter")
+            .addEventListener("change", function () {
+
+                let sorted =
+                    [...allSales];
+
+                if (this.value === "highest") {
+
+                    sorted.sort(
+                        (a, b) =>
+                            b.quantity - a.quantity
+                    );
+                }
+
+                else if (
+                    this.value === "lowest"
+                ) {
+
+                    sorted.sort(
+                        (a, b) =>
+                            a.quantity - b.quantity
+                    );
+                }
+
+                else {
+
+                    sorted.sort(
+                        (a, b) =>
+                            b.id - a.id
+                    );
+                }
+
+                renderSalesTable(sorted);
+            });
+
+        // =====================================================
+        // INITIALIZE SYSTEM
+        // =====================================================
+        initializeDashboard();
+
+    </script>
+
+</body>
+
+</html>
