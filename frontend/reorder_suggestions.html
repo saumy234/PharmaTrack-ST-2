@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PharmaTrack</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        *{
+            box-sizing:border-box;
+        }
+
+        body{
+            margin:0;
+            font-family:'Segoe UI',sans-serif;
+            background:linear-gradient(135deg,#020617,#0f172a,#1e293b);
+            color:white;
+        }
+
+        .main{
+            padding:30px;
+        }
+
+        h1{
+            margin-bottom:25px;
+        }
+
+        /* HERO */
+        .hero{
+            background:linear-gradient(
+                135deg,
+                rgba(74,222,128,0.12),
+                rgba(96,165,250,0.08)
+            );
+
+            border:1px solid rgba(74,222,128,0.25);
+
+            padding:25px;
+
+            border-radius:18px;
+
+            margin-bottom:30px;
+
+            box-shadow:0 0 20px rgba(74,222,128,0.12);
+
+            cursor:pointer;
+
+            transition:.35s;
+        }
+
+        .hero:hover{
+            transform:translateY(-4px);
+            box-shadow:0 0 28px rgba(74,222,128,0.25);
+        }
+
+        .hero h2{
+            color:#4ade80;
+            margin:0 0 10px 0;
+        }
+
+        .hero small{
+            color:#94a3b8;
+        }
+
+        /* KPI */
+        .stats-grid{
+            display:grid;
+            grid-template-columns:repeat(6,1fr);
+            gap:18px;
+            margin-bottom:30px;
+        }
+
+        .stat-card,
+        .card,
+        .insight-card{
+
+            background:rgba(255,255,255,0.05);
+
+            padding:20px;
+
+            border-radius:16px;
+
+            backdrop-filter:blur(14px);
+
+            border:1px solid rgba(255,255,255,0.06);
+
+            transition:.35s;
+        }
+
+        .stat-card:hover,
+        .card:hover,
+        .insight-card:hover{
+
+            transform:translateY(-6px);
+
+            box-shadow:0 0 22px rgba(74,222,128,0.22);
+        }
+
+        .stat-card h3,
+        .insight-card h3{
+
+            font-size:14px;
+
+            color:#94a3b8;
+
+            margin:0;
+        }
+
+        .stat-card h2,
+        .insight-card p{
+
+            margin-top:12px;
+
+            color:#4ade80;
+
+            font-weight:bold;
+        }
+
+        /* CHART GRID */
+        .chart-grid{
+
+            display:grid;
+
+            grid-template-columns:1fr 1fr;
+
+            gap:20px;
+
+            margin-bottom:30px;
+        }
+
+        /* TABLE */
+        table{
+
+            width:100%;
+
+            border-collapse:collapse;
+        }
+
+        th,td{
+
+            padding:14px;
+
+            text-align:center;
+        }
+
+        th{
+            background:#1e293b;
+        }
+
+        tr:hover{
+            background:rgba(74,222,128,0.08);
+        }
+
+        /* BADGES */
+        .badge{
+
+            padding:6px 12px;
+
+            border-radius:20px;
+
+            font-size:12px;
+
+            font-weight:bold;
+        }
+
+        .critical{
+            background:#7f1d1d;
+            color:#fecaca;
+        }
+
+        .warning{
+            background:#78350f;
+            color:#fde68a;
+        }
+
+        .safe{
+            background:#14532d;
+            color:#bbf7d0;
+        }
+
+        /* FEED */
+        .feed-item{
+
+            padding:12px;
+
+            margin-bottom:12px;
+
+            border-radius:12px;
+
+            background:rgba(255,255,255,0.04);
+
+            border-left:4px solid #4ade80;
+        }
+
+        /* INSIGHTS */
+        .insight-grid{
+
+            display:grid;
+
+            grid-template-columns:1fr 1fr;
+
+            gap:20px;
+        }
+
+        /* MODAL */
+        .modal-overlay{
+
+            position:fixed;
+
+            inset:0;
+
+            background:rgba(0,0,0,0.7);
+
+            display:none;
+
+            justify-content:center;
+
+            align-items:center;
+
+            z-index:999;
+
+            backdrop-filter:blur(6px);
+        }
+
+        .modal{
+
+            width:900px;
+
+            max-width:95%;
+
+            max-height:85vh;
+
+            overflow-y:auto;
+
+            background:#0f172a;
+
+            border-radius:20px;
+
+            padding:25px;
+
+            border:1px solid rgba(74,222,128,0.25);
+
+            box-shadow:0 0 35px rgba(74,222,128,0.22);
+        }
+
+        .close-btn{
+
+            float:right;
+
+            font-size:22px;
+
+            cursor:pointer;
+
+            color:#94a3b8;
+        }
+
+        .close-btn:hover{
+            color:#f87171;
+        }
+
+        @media(max-width:1200px){
+
+            .stats-grid{
+                grid-template-columns:repeat(3,1fr);
+            }
+        }
+
+        @media(max-width:900px){
+
+            .chart-grid{
+                grid-template-columns:1fr;
+            }
+
+            .insight-grid{
+                grid-template-columns:1fr;
+            }
+
+            .stats-grid{
+                grid-template-columns:repeat(2,1fr);
+            }
+        }
+
+        @media(max-width:600px){
+
+            .stats-grid{
+                grid-template-columns:1fr;
+            }
+
+            .main{
+                padding:18px;
+            }
+
+            table{
+                font-size:13px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="main">
+
+    <h1>Reorder Suggestions</h1>
+
+    <div class="hero" onclick="openProcurementModal()">
+
+        <h2> Procurement Intelligence Summary</h2>
+
+        <p id="hero1">
+            Analyzing reorder requirements...
+        </p>
+
+        <p id="hero2">
+            Calculating procurement strategy...
+        </p>
+
+        <small>
+            Click to view detailed procurement breakdown →
+        </small>
+
+    </div>
+
+    <!-- KPI -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h3>Medicines to Reorder</h3>
+            <h2 id="reorderCount">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Urgent Reorders</h3>
+            <h2 id="urgentCount">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total Units Needed</h3>
+            <h2 id="unitsNeeded">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Estimated Budget</h3>
+            <h2 id="budget">₹0</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Avg Priority Score</h3>
+            <h2 id="priorityAvg">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Critical Risk</h3>
+            <h2 id="criticalRisk">0</h2>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="chart-grid">
+
+        <div class="card">
+
+            <h3> Procurement Priority Chart</h3>
+
+            <canvas id="priorityChart"></canvas>
+
+        </div>
+
+        <div class="card">
+
+            <h3> Budget Allocation</h3>
+
+            <canvas id="budgetChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+
+        <h3> Recommended Procurement Queue</h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Medicine</th>
+                    <th>Current Stock</th>
+                    <th>Predicted Demand</th>
+                    <th>Reorder Qty</th>
+                    <th>Priority</th>
+                    <th>Lead Time</th>
+                    <th>Cost</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="reorderTable"></tbody>
+
+        </table>
+
+    </div>
+
+    <!-- EXTRA SECTION -->
+    <div class="chart-grid" style="margin-top:30px;">
+
+        <div class="card">
+
+            <h3> AI Recommendation Feed</h3>
+
+            <div id="recommendationFeed"></div>
+
+        </div>
+
+        <div class="card">
+
+            <h3> Strategic Procurement Insights</h3>
+
+            <div class="insight-grid">
+
+                <div class="insight-card">
+
+                    <h3>Immediate Action</h3>
+
+                    <p id="immediateAction">--</p>
+
+                </div>
+
+                <div class="insight-card">
+
+                    <h3>Budget Warning</h3>
+
+                    <p id="budgetWarning">--</p>
+
+                </div>
+
+                <div class="insight-card">
+
+                    <h3>Bulk Buy</h3>
+
+                    <p id="bulkBuy">--</p>
+
+                </div>
+
+                <div class="insight-card">
+
+                    <h3>Overstock Prevention</h3>
+
+                    <p id="overstockPrevention">--</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="procurementModal">
+
+    <div class="modal">
+
+        <span class="close-btn" onclick="closeProcurementModal()">✕</span>
+
+        <h2 style="color:#4ade80;">
+             Detailed Procurement Review
+        </h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Medicine</th>
+                    <th>Stock</th>
+                    <th>Predicted</th>
+                    <th>Reorder</th>
+                    <th>Priority</th>
+                    <th>Lead Time</th>
+                    <th>Cost</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="modalProcurementTable"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   BACKEND URL
+========================================================= */
+
+const API_BASE = "http://127.0.0.1:5001";
+
+/* =========================================================
+   GLOBALS
+========================================================= */
+
+let priorityChart;
+let budgetChart;
+let procurementData=[];
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
+async function loadReorderSuggestions(){
+
+    try{
+
+        /* ================================================
+           CONNECTED TO YOUR REAL BACKEND
+        ================================================ */
+
+        const [
+            medRes,
+            salesRes,
+            inventoryAnalyticsRes,
+            movementRes,
+            alertsRes
+        ] = await Promise.all([
+
+            fetch(`${API_BASE}/medicines`),
+            fetch(`${API_BASE}/sales`),
+
+            fetch(`${API_BASE}/inventory/analytics`),
+
+            fetch(`${API_BASE}/inventory/movement`),
+
+            fetch(`${API_BASE}/inventory/alerts`)
+        ]);
+
+        const medicines = await medRes.json();
+        const sales = await salesRes.json();
+
+        const inventoryAnalytics =
+            await inventoryAnalyticsRes.json();
+
+        const movementData =
+            await movementRes.json();
+
+        const alerts =
+            await alertsRes.json();
+
+        processReorders(
+            medicines,
+            sales,
+            inventoryAnalytics,
+            movementData,
+            alerts
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Unable to connect to MediGuard backend on port 5001"
+        );
+    }
+}
+
+/* =========================================================
+   PROCESS
+========================================================= */
+
+function processReorders(
+    medicines,
+    sales,
+    inventoryAnalytics,
+    movementData,
+    alerts
+){
+
+    const salesMap={};
+
+    sales.forEach(s=>{
+
+        salesMap[s.name] =
+            (salesMap[s.name] || 0)
+            + s.quantity;
+    });
+
+    const movementMap={};
+
+    movementData.forEach(item=>{
+
+        movementMap[item.medicine] =
+            item.movement_score;
+    });
+
+    const table =
+        document.getElementById("reorderTable");
+
+    const feed =
+        document.getElementById("recommendationFeed");
+
+    table.innerHTML="";
+    feed.innerHTML="";
+    procurementData=[];
+
+    let reorderCount=0;
+    let urgentCount=0;
+    let unitsNeeded=0;
+    let budget=0;
+    let totalPriority=0;
+    let criticalRisk=0;
+
+    let topReorderMed="";
+
+    const labels=[];
+    const priorityData=[];
+    const budgetData=[];
+
+    medicines.forEach(med=>{
+
+        const sold =
+            salesMap[med.name] || 0;
+
+        const movementScore =
+            movementMap[med.name] || 0;
+
+        /* ================================================
+           SMART PREDICTION
+        ================================================ */
+
+        const predicted =
+            Math.ceil(
+                (
+                    sold
+                    +
+                    movementScore
+                    +
+                    med.min_stock
+                ) * 1.15
+            ) || 2;
+
+        const reorder =
+            Math.max(
+                Math.ceil(
+                    (predicted * 1.3)
+                    - med.stock
+                ),
+                0
+            );
+
+        if(reorder<=0) return;
+
+        reorderCount++;
+
+        unitsNeeded += reorder;
+
+        const cost =
+            reorder * 50;
+
+        budget += cost;
+
+        /* ================================================
+           PRIORITY
+        ================================================ */
+
+        const priority =
+            (
+                reorder * 2
+            )
+            +
+            (
+                med.stock <= med.min_stock
+                ? 20
+                : 0
+            )
+            +
+            Math.ceil(movementScore);
+
+        totalPriority += priority;
+
+        let badge="safe";
+
+        if(priority>=25){
+
+            badge="critical";
+
+            urgentCount++;
+
+            criticalRisk++;
+        }
+
+        else if(priority>=10){
+
+            badge="warning";
+        }
+
+        const leadTime =
+            Math.floor(Math.random()*4)+1;
+
+        if(!topReorderMed)
+            topReorderMed = med.name;
+
+        procurementData.push({
+
+            name:med.name,
+
+            stock:med.stock,
+
+            predicted,
+
+            reorder,
+
+            priority,
+
+            badge,
+
+            leadTime,
+
+            cost
+        });
+
+        labels.push(med.name);
+
+        priorityData.push(priority);
+
+        budgetData.push(cost);
+
+        /* ================================================
+           TABLE
+        ================================================ */
+
+        table.innerHTML += `
+
+            <tr>
+
+                <td>${med.name}</td>
+
+                <td>${med.stock}</td>
+
+                <td>${predicted}</td>
+
+                <td>${reorder}</td>
+
+                <td>
+                    <span class="badge ${badge}">
+                        ${priority}
+                    </span>
+                </td>
+
+                <td>${leadTime} Days</td>
+
+                <td>₹${cost}</td>
+
+            </tr>
+        `;
+
+        /* ================================================
+           FEED
+        ================================================ */
+
+        feed.innerHTML += `
+
+            <div class="feed-item">
+
+                📦 Reorder
+                <b>${med.name}</b>
+
+                (${reorder} units)
+
+                — Priority ${priority}
+
+            </div>
+        `;
+    });
+
+    /* =====================================================
+       KPIs
+    ===================================================== */
+
+    document.getElementById("reorderCount")
+        .innerText = reorderCount;
+
+    document.getElementById("urgentCount")
+        .innerText = urgentCount;
+
+    document.getElementById("unitsNeeded")
+        .innerText = unitsNeeded;
+
+    document.getElementById("budget")
+        .innerText = "₹" + budget;
+
+    document.getElementById("priorityAvg")
+        .innerText =
+            reorderCount
+            ?
+            Math.round(
+                totalPriority / reorderCount
+            )
+            :
+            0;
+
+    document.getElementById("criticalRisk")
+        .innerText = criticalRisk;
+
+    /* =====================================================
+       HERO
+    ===================================================== */
+
+    document.getElementById("hero1")
+        .innerText =
+            `${reorderCount} medicines require procurement review.`;
+
+    document.getElementById("hero2")
+        .innerText =
+            `Estimated procurement budget: ₹${budget}`;
+
+    /* =====================================================
+       INSIGHTS
+    ===================================================== */
+
+    document.getElementById("immediateAction")
+        .innerText =
+            topReorderMed || "No action required";
+
+    document.getElementById("budgetWarning")
+        .innerText =
+            budget > 1000
+            ?
+            "High procurement spend expected"
+            :
+            "Budget within normal range";
+
+    document.getElementById("bulkBuy")
+        .innerText =
+            topReorderMed
+            ?
+            `Consider bulk ordering ${topReorderMed}`
+            :
+            "None";
+
+    document.getElementById("overstockPrevention")
+        .innerText =
+            inventoryAnalytics.overstock_count > 0
+            ?
+            "Reduce procurement for overstocked items"
+            :
+            "No overstock risk detected";
+
+    renderCharts(
+        labels,
+        priorityData,
+        budgetData
+    );
+}
+
+/* =========================================================
+   CHARTS
+========================================================= */
+
+function renderCharts(
+    labels,
+    priorityData,
+    budgetData
+){
+
+    if(priorityChart)
+        priorityChart.destroy();
+
+    if(budgetChart)
+        budgetChart.destroy();
+
+    priorityChart =
+        new Chart(
+            document.getElementById("priorityChart"),
+            {
+
+                type:"bar",
+
+                data:{
+
+                    labels,
+
+                    datasets:[{
+
+                        data:priorityData,
+
+                        backgroundColor:"#4ade80"
+                    }]
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    plugins:{
+                        legend:{
+                            display:false
+                        }
+                    }
+                }
+            }
+        );
+
+    budgetChart =
+        new Chart(
+            document.getElementById("budgetChart"),
+            {
+
+                type:"doughnut",
+
+                data:{
+
+                    labels,
+
+                    datasets:[{
+
+                        data:budgetData,
+
+                        backgroundColor:[
+                            "#4ade80",
+                            "#60a5fa",
+                            "#facc15",
+                            "#ef4444",
+                            "#a855f7",
+                            "#22d3ee"
+                        ]
+                    }]
+                }
+            }
+        );
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openProcurementModal(){
+
+    const modalTable =
+        document.getElementById(
+            "modalProcurementTable"
+        );
+
+    modalTable.innerHTML="";
+
+    procurementData.forEach(item=>{
+
+        modalTable.innerHTML += `
+
+            <tr>
+
+                <td>${item.name}</td>
+
+                <td>${item.stock}</td>
+
+                <td>${item.predicted}</td>
+
+                <td>${item.reorder}</td>
+
+                <td>
+                    <span class="badge ${item.badge}">
+                        ${item.priority}
+                    </span>
+                </td>
+
+                <td>${item.leadTime} Days</td>
+
+                <td>₹${item.cost}</td>
+
+            </tr>
+        `;
+    });
+
+    document.getElementById(
+        "procurementModal"
+    ).style.display = "flex";
+}
+
+function closeProcurementModal(){
+
+    document.getElementById(
+        "procurementModal"
+    ).style.display = "none";
+}
+
+window.addEventListener("click",(e)=>{
+
+    if(
+        e.target.id==="procurementModal"
+    ){
+
+        closeProcurementModal();
+    }
+});
+
+/* =========================================================
+   AUTO LOAD
+========================================================= */
+
+loadReorderSuggestions();
+
+/* =========================================================
+   AUTO REFRESH
+========================================================= */
+
+setInterval(
+    loadReorderSuggestions,
+    30000
+);
+
+</script>
+
+</body>
+</html>
