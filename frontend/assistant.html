@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PharmaTrack AI Assistant</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+
+            font-family:'Segoe UI',sans-serif;
+
+            background:
+                radial-gradient(circle at top right,#172554 0%,#020617 35%),
+                linear-gradient(135deg,#020617,#0f172a,#1e293b);
+
+            color:white;
+
+            min-height:100vh;
+        }
+
+        .main{
+
+            max-width:1400px;
+
+            margin:auto;
+
+            padding:30px;
+        }
+
+        /* HERO */
+
+        .hero{
+
+            padding:30px;
+
+            border-radius:24px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172033,
+                    #1e293b
+                );
+
+            border:1px solid rgba(96,165,250,.15);
+
+            margin-bottom:30px;
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,.25);
+        }
+
+        .hero h1{
+
+            font-size:34px;
+
+            margin-bottom:10px;
+
+            color:#60a5fa;
+        }
+
+        .hero p{
+
+            color:#cbd5e1;
+
+            font-size:16px;
+        }
+
+        /* QUICK PROMPTS */
+
+        .quick-prompts{
+
+            display:grid;
+
+            grid-template-columns:repeat(4,1fr);
+
+            gap:16px;
+
+            margin:25px 0;
+        }
+
+        .prompt-btn{
+
+            padding:16px;
+
+            border:none;
+
+            border-radius:16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #1e293b,
+                    #0f172a
+                );
+
+            color:white;
+
+            cursor:pointer;
+
+            font-weight:600;
+
+            transition:.3s;
+
+            border:1px solid rgba(255,255,255,.06);
+        }
+
+        .prompt-btn:hover{
+
+            transform:translateY(-4px);
+
+            box-shadow:
+                0 0 20px rgba(96,165,250,.18);
+        }
+
+        /* CHAT AREA */
+
+        .assistant-card{
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172033,
+                    #1e293b
+                );
+
+            border-radius:24px;
+
+            padding:24px;
+
+            border:1px solid rgba(255,255,255,.06);
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,.25);
+        }
+
+        .chat-box{
+
+            min-height:400px;
+
+            max-height:600px;
+
+            overflow-y:auto;
+
+            padding:10px;
+
+            margin-bottom:20px;
+        }
+
+        .message{
+
+            margin-bottom:18px;
+
+            padding:16px 20px;
+
+            border-radius:18px;
+
+            max-width:80%;
+
+            animation:fadeIn .4s ease;
+
+            line-height:1.6;
+        }
+
+        .user{
+
+            background:#2563eb;
+
+            margin-left:auto;
+        }
+
+        .bot{
+
+            background:#1e293b;
+
+            border:1px solid rgba(96,165,250,.12);
+        }
+
+        @keyframes fadeIn{
+
+            from{
+                opacity:0;
+                transform:translateY(10px);
+            }
+
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        /* INPUT */
+
+        .input-area{
+
+            display:flex;
+
+            gap:14px;
+        }
+
+        .input-area input{
+
+            flex:1;
+
+            padding:16px;
+
+            border:none;
+
+            border-radius:14px;
+
+            background:#0f172a;
+
+            color:white;
+
+            font-size:15px;
+
+            outline:none;
+        }
+
+        .input-area button{
+
+            padding:16px 24px;
+
+            border:none;
+
+            border-radius:14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #3b82f6,
+                    #2563eb
+                );
+
+            color:white;
+
+            font-weight:700;
+
+            cursor:pointer;
+
+            transition:.3s;
+        }
+
+        .input-area button:hover{
+
+            transform:translateY(-2px);
+
+            box-shadow:
+                0 0 18px rgba(59,130,246,.35);
+        }
+
+        /* RESPONSE CARDS */
+
+        .response-card{
+
+            margin-top:12px;
+
+            padding:14px;
+
+            border-radius:14px;
+
+            background:rgba(255,255,255,.04);
+
+            border-left:4px solid #60a5fa;
+        }
+
+        .success-card{
+            border-left-color:#4ade80;
+        }
+
+        .danger-card{
+            border-left-color:#ef4444;
+        }
+
+        .warning-card{
+            border-left-color:#facc15;
+        }
+
+        /* TYPING */
+
+        .loading-dot{
+
+            font-size:22px;
+
+            animation:blink 1.4s infinite;
+        }
+
+        .loading-dot:nth-child(2){
+            animation-delay:.2s;
+        }
+
+        .loading-dot:nth-child(3){
+            animation-delay:.4s;
+        }
+
+        @keyframes blink{
+
+            0%,
+            80%,
+            100%{
+                opacity:.2;
+            }
+
+            40%{
+                opacity:1;
+            }
+        }
+
+        /* SCROLLBAR */
+
+        ::-webkit-scrollbar{
+            width:8px;
+        }
+
+        ::-webkit-scrollbar-thumb{
+            background:#334155;
+            border-radius:10px;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:1000px){
+
+            .quick-prompts{
+                grid-template-columns:1fr 1fr;
+            }
+        }
+
+        @media(max-width:700px){
+
+            .quick-prompts{
+                grid-template-columns:1fr;
+            }
+
+            .input-area{
+                flex-direction:column;
+            }
+
+            .message{
+                max-width:100%;
+            }
+
+            .main{
+                padding:18px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="main">
+
+    <!-- HERO -->
+
+    <div class="hero">
+
+        <h1>PharmaTrack AI Assistant</h1>
+
+        <p>
+            Ask anything about inventory,
+            alerts, demand, expiry,
+            procurement, FEFO analysis,
+            and operational intelligence.
+        </p>
+
+    </div>
+
+    <!-- CLEAR -->
+
+    <div
+        style="
+            display:flex;
+            justify-content:flex-end;
+            margin-bottom:20px;
+        "
+    >
+
+        <button
+            onclick="clearChat()"
+            class="prompt-btn"
+        >
+             Clear Chat History
+        </button>
+
+    </div>
+
+    <!-- QUICK PROMPTS -->
+
+    <div class="quick-prompts">
+
+        <button
+            class="prompt-btn"
+            onclick="quickAsk('Which medicines need reorder?')"
+        >
+             Reorder Needed
+        </button>
+
+        <button
+            class="prompt-btn"
+            onclick="quickAsk('Show critical alerts')"
+        >
+             Critical Alerts
+        </button>
+
+        <button
+            class="prompt-btn"
+            onclick="quickAsk('Highest demand medicine')"
+        >
+             Demand Intelligence
+        </button>
+
+        <button
+            class="prompt-btn"
+            onclick="quickAsk('Which medicines expire soon?')"
+        >
+             Expiry Risks
+        </button>
+
+    </div>
+
+    <!-- CHAT -->
+
+    <div class="assistant-card">
+
+        <div
+            id="chatBox"
+            class="chat-box"
+        ></div>
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="queryInput"
+                placeholder="Ask MediGuard anything..."
+            >
+
+            <button onclick="askAI()">
+                Ask AI
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   BACKEND CONFIG
+========================================================= */
+
+const API_BASE =
+    "http://127.0.0.1:5001";
+
+const chatBox =
+    document.getElementById("chatBox");
+
+const queryInput =
+    document.getElementById("queryInput");
+
+/* =========================================================
+   INITIALIZE CHAT
+========================================================= */
+
+window.onload = async function(){
+
+    const saved =
+        localStorage.getItem(
+            "mediguard_ai_chat"
+        );
+
+    if(saved){
+
+        chatBox.innerHTML = saved;
+
+        scrollToBottom();
+    }
+
+    else{
+
+        addBotMessageWithTyping(`
+
+            <strong>
+                Welcome to MediGuard AI Assistant
+            </strong>
+
+            <br><br>
+
+            I can help you with:
+
+            <div class="response-card success-card">
+                 Inventory Reorder Intelligence
+            </div>
+
+            <div class="response-card danger-card">
+                 Critical Alert Monitoring
+            </div>
+
+            <div class="response-card">
+                 Demand Forecasting
+            </div>
+
+            <div class="response-card warning-card">
+                 Expiry Risk Analysis
+            </div>
+        `);
+    }
+};
+
+/* =========================================================
+   QUICK ASK
+========================================================= */
+
+function quickAsk(text){
+
+    queryInput.value = text;
+
+    askAI();
+}
+
+/* =========================================================
+   ASK AI
+========================================================= */
+
+async function askAI(){
+
+    const query =
+        queryInput.value.trim();
+
+    if(!query) return;
+
+    addMessage(
+        query,
+        "user"
+    );
+
+    queryInput.value = "";
+
+    addLoading();
+
+    try{
+
+        const res = await fetch(
+
+            `${API_BASE}/ai-assistant`,
+
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+                    query:query
+                })
+            }
+        );
+
+        const data =
+            await res.json();
+
+        removeLoading();
+
+        if(!res.ok){
+
+            addBotMessageWithTyping(`
+
+                <div class="response-card danger-card">
+
+                    ${data.error || "Request failed"}
+
+                </div>
+
+            `);
+
+            return;
+        }
+
+        renderAIResponse(data);
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        removeLoading();
+
+        addBotMessageWithTyping(`
+
+            <div class="response-card danger-card">
+
+                Failed to connect to backend server.
+
+            </div>
+
+        `);
+    }
+}
+/* =========================================================
+   ADD USER MESSAGE
+========================================================= */
+
+function addMessage(
+    text,
+    type
+){
+
+    const time =
+        getCurrentTime();
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        `message ${type}`;
+
+    div.innerHTML = `
+
+        ${text}
+
+        <div
+            style="
+                margin-top:8px;
+                font-size:11px;
+                opacity:.65;
+            "
+        >
+
+            ${time}
+
+        </div>
+    `;
+
+    chatBox.appendChild(div);
+
+    saveChat();
+
+    scrollToBottom();
+}
+
+/* =========================================================
+   TYPING EFFECT
+========================================================= */
+
+function addBotMessageWithTyping(html){
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "message bot";
+
+    chatBox.appendChild(div);
+
+    let i = 0;
+
+    const speed = 6;
+
+    const temp =
+        document.createElement("div");
+
+    temp.innerHTML = html;
+
+    const finalHTML =
+        temp.innerHTML;
+
+    function typeWriter(){
+
+        if(i < finalHTML.length){
+
+            div.innerHTML =
+                finalHTML.slice(
+                    0,
+                    i + 1
+                );
+
+            i++;
+
+            scrollToBottom();
+
+            setTimeout(
+                typeWriter,
+                speed
+            );
+        }
+
+        else{
+
+            div.innerHTML += `
+
+                <div
+                    style="
+                        margin-top:8px;
+                        font-size:11px;
+                        opacity:.65;
+                    "
+                >
+
+                    ${getCurrentTime()}
+
+                </div>
+            `;
+
+            saveChat();
+
+            scrollToBottom();
+        }
+    }
+
+    typeWriter();
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function addLoading(){
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "message bot";
+
+    div.id =
+        "loadingMsg";
+
+    div.innerHTML = `
+
+        <span class="loading-dot">.</span>
+
+        <span class="loading-dot">.</span>
+
+        <span class="loading-dot">.</span>
+    `;
+
+    chatBox.appendChild(div);
+
+    scrollToBottom();
+}
+
+function removeLoading(){
+
+    const loading =
+        document.getElementById(
+            "loadingMsg"
+        );
+
+    if(loading)
+        loading.remove();
+}
+
+/* =========================================================
+   RENDER AI RESPONSE
+========================================================= */
+
+function renderAIResponse(data){
+
+    let html = `
+
+        <strong>
+            ${data.title || "AI Response"}
+        </strong>
+
+        <br><br>
+    `;
+
+    if(data.summary){
+
+        html += `
+
+            <div class="response-card">
+
+                ${data.summary}
+
+            </div>
+        `;
+    }
+
+    /* =============================================
+       REORDER
+    ============================================= */
+
+    if(data.type === "reorder_list"){
+
+        data.items.forEach(item=>{
+
+            html += `
+
+                <div class="response-card success-card">
+
+                    
+                    <strong>${item.medicine}</strong>
+
+                    <br>
+
+                    Stock:
+                    ${item.current_stock}
+
+                    <br>
+
+                    Min Required:
+                    ${item.min_stock}
+
+                </div>
+            `;
+        });
+    }
+
+    /* =============================================
+       ALERTS
+    ============================================= */
+
+    else if(data.type === "alert_list"){
+
+        data.items.forEach(item=>{
+
+            html += `
+
+                <div class="response-card danger-card">
+
+                    
+                    <strong>${item.type}</strong>
+
+                    <br>
+
+                    ${item.message}
+
+                    <br>
+
+                    Status:
+                    ${item.status}
+
+                </div>
+            `;
+        });
+    }
+
+    /* =============================================
+       TOP MEDICINE
+    ============================================= */
+
+    else if(data.type === "top_medicine"){
+
+        html += `
+
+            <div class="response-card">
+
+                
+                <strong>${data.medicine}</strong>
+
+                <br>
+
+                Units Sold:
+                ${data.units_sold}
+
+            </div>
+        `;
+    }
+
+    /* =============================================
+       EXPIRY
+    ============================================= */
+
+    else if(data.type === "expiry_list"){
+
+        data.items.forEach(item=>{
+
+            html += `
+
+                <div class="response-card warning-card">
+
+                    
+                    <strong>${item.name}</strong>
+
+                    <br>
+
+                    Expiry:
+                    ${item.expiry_date}
+
+                    <br>
+
+                    Days Left:
+                    ${item.days_left}
+
+                </div>
+            `;
+        });
+    }
+
+    /* =============================================
+       DEFAULT
+    ============================================= */
+
+    else if(data.response){
+
+        html += `
+
+            <div class="response-card">
+
+                ${data.response}
+
+            </div>
+        `;
+    }
+
+    addBotMessageWithTyping(html);
+}
+
+/* =========================================================
+   SAVE CHAT
+========================================================= */
+
+function saveChat(){
+
+    localStorage.setItem(
+
+        "mediguard_ai_chat",
+
+        chatBox.innerHTML
+    );
+}
+
+/* =========================================================
+   CLEAR CHAT
+========================================================= */
+
+function clearChat(){
+
+    localStorage.removeItem(
+        "mediguard_ai_chat"
+    );
+
+    chatBox.innerHTML = "";
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function scrollToBottom(){
+
+    chatBox.scrollTo({
+
+        top:chatBox.scrollHeight,
+
+        behavior:"smooth"
+    });
+}
+
+function getCurrentTime(){
+
+    return new Date()
+        .toLocaleTimeString(
+            [],
+            {
+                hour:'2-digit',
+                minute:'2-digit'
+            }
+        );
+}
+
+/* =========================================================
+   ENTER KEY
+========================================================= */
+
+queryInput.addEventListener(
+
+    "keypress",
+
+    function(e){
+
+        if(e.key === "Enter"){
+
+            askAI();
+        }
+    }
+);
+
+</script>
+
+</body>
+
+</html>
