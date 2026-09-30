@@ -2,49 +2,75 @@ PharmaTrack
 
 Smart Pharmaceutical Inventory and Cold Chain Monitoring System
 
-PharmaTrack is a web-based system for managing pharmaceutical inventory, medicine batches, sales, expiry, cold-chain conditions, and operational alerts. The project uses a modular Flask backend, a single SQLite database, frontend pages connected through REST APIs, and an ESP32-based temperature monitoring unit.
+PharmaTrack is a web-based system for managing pharmaceutical inventory, medicine batches, sales, expiry, cold-chain monitoring, and operational alerts. It combines a frontend application, modular Flask REST APIs, a SQLite database, and an ESP32-based temperature monitoring unit.
 
 Features
 
-Medicine onboarding and batch management
+Area
 
-FEFO (First Expiry, First Out) inventory management
+Functionality
 
-Stock monitoring and inventory analytics
+Medicine Management
 
-Sales recording, history, and analytics
+Onboarding, batch management, restocking, medicine details
 
-Expiry and near-expiry batch tracking
+Inventory
 
-Demand prediction and consumption analysis
+Stock monitoring, analytics, FEFO, movement analysis
 
-Reorder suggestions and stock priorities
+Sales
 
-ESP32-based temperature monitoring
+Sales recording, history, trends, analytics
 
-Automatic high-temperature alerts
+Expiry
 
-Inventory and temperature alerts
+Expired and near-expiry batch tracking
 
-Alert acknowledgement, resolution, and command center
+Demand & Reorder
 
-Medicine details and batch-level intelligence
+Demand prediction and reorder suggestions
 
-Operational Assistant for inventory queries
+Cold Chain
+
+ESP32 temperature and humidity monitoring
+
+Alerts
+
+Temperature/inventory alerts, acknowledgement, resolution
+
+Assistant
+
+Operational inventory queries
 
 Tech Stack
 
-Frontend: HTML5, CSS3, JavaScript, Bootstrap, Chart.js
+Layer
 
-Backend: Python, Flask, Flask Blueprints, REST APIs
+Technology
 
-Database: SQLite
+Frontend
 
-IoT: ESP32 / NodeMCU, DS18B20 temperature sensor, OneWire, DallasTemperature
+HTML5, CSS3, JavaScript, Bootstrap, Chart.js
 
-Communication: Wi-Fi + HTTP/JSON
+Backend
 
-Testing: Postman
+Python, Flask, Flask Blueprints, REST APIs
+
+Database
+
+SQLite
+
+IoT
+
+ESP32 / NodeMCU, DS18B20
+
+Communication
+
+Wi-Fi, HTTP/JSON
+
+Testing
+
+Postman
 
 Project Structure
 
@@ -82,15 +108,15 @@ Responsibility
 
 medicines_api.py
 
-Medicine onboarding, details, restocking, batch operations
+Medicine onboarding, details, restocking and batch operations
 
 inventory_api.py
 
-Stock analytics, FEFO, expiry, demand, reorder
+Stock analytics, FEFO, expiry, demand and reorder
 
 sales_api.py
 
-Sales transactions, history, trends, analytics
+Sales transactions, history and analytics
 
 cold_chain_api.py
 
@@ -98,7 +124,7 @@ Temperature monitoring and alert operations
 
 assistant_api.py
 
-Operational Assistant queries
+Assistant queries
 
 helpers.py
 
@@ -108,90 +134,269 @@ database.py
 
 SQLite connection management
 
-Main API Endpoints
+API Reference
 
 Medicines
 
-GET    /medicines
-POST   /medicines
-GET    /medicine/<id>
-PUT    /medicines/restock/<id>
-DELETE /medicines/<id>
-DELETE /batches/<batch_id>
+Method
+
+Endpoint
+
+Purpose
+
+GET
+
+/medicines
+
+Fetch medicines
+
+POST
+
+/medicines
+
+Add medicine
+
+GET
+
+/medicine/<id>
+
+Medicine details
+
+PUT
+
+/medicines/restock/<id>
+
+Restock medicine
+
+DELETE
+
+/medicines/<id>
+
+Delete medicine
+
+DELETE
+
+/batches/<batch_id>
+
+Delete batch
 
 Inventory
 
-GET /inventory/analytics
-GET /inventory/distribution
-GET /inventory/alerts
-GET /inventory/fefo-risk
-GET /inventory/movement
-GET /expiry-batches
-GET /inventory/demand-prediction
-GET /inventory/reorder-suggestions
+Method
+
+Endpoint
+
+Purpose
+
+GET
+
+/inventory/analytics
+
+Inventory analytics
+
+GET
+
+/inventory/distribution
+
+Stock distribution
+
+GET
+
+/inventory/alerts
+
+Inventory alerts
+
+GET
+
+/inventory/fefo-risk
+
+FEFO risk analysis
+
+GET
+
+/inventory/movement
+
+Inventory movement
+
+GET
+
+/expiry-batches
+
+Expiry tracking
+
+GET
+
+/inventory/demand-prediction
+
+Demand analysis
+
+GET
+
+/inventory/reorder-suggestions
+
+Reorder suggestions
 
 Sales
 
-POST /sales
-GET  /sales
-GET  /sales/analytics
-GET  /sales/trends
-GET  /sales/activity
-GET  /sales/fefo-analysis
+Method
+
+Endpoint
+
+Purpose
+
+POST
+
+/sales
+
+Record sale
+
+GET
+
+/sales
+
+Sales history
+
+GET
+
+/sales/analytics
+
+Sales analytics
+
+GET
+
+/sales/trends
+
+Sales trends
+
+GET
+
+/sales/activity
+
+Sales activity
+
+GET
+
+/sales/fefo-analysis
+
+FEFO sales analysis
 
 Cold Chain & Alerts
 
-GET /temperature
-POST /temperature
-GET /alerts
-GET /alerts/command-center
-PUT /acknowledge_alert/<alert_id>
-PUT /resolve_alert/<alert_id>
+Method
+
+Endpoint
+
+Purpose
+
+GET
+
+/temperature
+
+Fetch temperature data
+
+POST
+
+/temperature
+
+Add temperature reading
+
+GET
+
+/alerts
+
+Fetch alerts
+
+GET
+
+/alerts/command-center
+
+Alert command center
+
+PUT
+
+/acknowledge_alert/<alert_id>
+
+Acknowledge alert
+
+PUT
+
+/resolve_alert/<alert_id>
+
+Resolve alert
 
 Assistant & System
 
-POST /ai-assistant
-GET  /
-GET  /health
+Method
+
+Endpoint
+
+Purpose
+
+POST
+
+/ai-assistant
+
+Assistant query
+
+GET
+
+/
+
+Backend status
+
+GET
+
+/health
+
+Health check
 
 IoT Integration
 
-The cold-chain monitoring unit uses an ESP32 connected to a DS18B20 temperature sensor.
+The cold-chain unit uses an ESP32 with a DS18B20 temperature sensor.
 
-Working
+Parameter
+
+Value
+
+Temperature sensor
 
 DS18B20
-   │
-   │ Temperature Reading
-   ▼
-ESP32
-   │
-   │ Wi-Fi
-   ▼
-HTTP POST /temperature
-   │
-   ▼
-Flask Backend
-   │
-   ├── Store reading
-   ├── Check threshold
-   └── Create / resolve alert
-   │
-   ▼
-PharmaTrack Website
-   │
-   ▼
-Cold Chain & Alert Dashboard
 
-Temperature Monitoring
+Sensor pin
 
-The IoT code uses:
+GPIO 19
 
-Sensor Pin : GPIO 19
-LED Pin    : GPIO 18
-Threshold  : 28°C
+Alert LED
 
-The ESP32 reads the temperature every 5 seconds and sends JSON data to the backend.
+GPIO 18
+
+Temperature threshold
+
+28°C
+
+Reading interval
+
+5 seconds
+
+Device ID
+
+ESP32_ROOM_1
+
+How it works
+
+DS18B20 measures the temperature.
+
+ESP32 checks the reading against the 28°C threshold.
+
+ESP32 sends the reading to POST /temperature using Wi-Fi and HTTP/JSON.
+
+Flask stores the reading in temperature_logs.
+
+If the temperature is above 28°C, the backend creates a temperature alert.
+
+The alert appears on the PharmaTrack cold-chain/alert pages.
+
+When the temperature returns to 28°C or below, active/acknowledged temperature alerts are resolved.
 
 Example payload:
 
@@ -202,70 +407,47 @@ Example payload:
   "sensor_status": "ACTIVE"
 }
 
-Alert Flow
-
-When the sensor reports a temperature above 28°C:
-
-The ESP32 turns its LED on.
-
-The ESP32 sends the reading to POST /temperature.
-
-The backend stores the temperature reading.
-
-The backend creates a temperature alert.
-
-The alert appears on the PharmaTrack website.
-
-When the temperature returns to 28°C or below:
-
-The ESP32 turns the LED off.
-
-The new reading is sent to the backend.
-
-Active/acknowledged temperature alerts are resolved by the backend.
-
-The alert status is updated on the website.
-
 Database
 
 PharmaTrack uses one SQLite database:
 
 database/database.db
 
-Main tables:
+Table
+
+Purpose
 
 medicines
+
+Medicine master data
+
 medicine_batches
+
+Batch, quantity and expiry data
+
 sales
+
+Sales transactions
+
 temperature_logs
+
+IoT temperature readings
+
 alerts
+
+System alerts and status
+
 predictions
 
-database/database_setup.py is used for database setup and seed data.
+Demand prediction records
 
-Architecture
+Database setup:
 
-Frontend
-   │
-   ▼
-Flask REST APIs
-   │
-   ├── Medicines API
-   ├── Inventory API
-   ├── Sales API
-   ├── Cold Chain API
-   └── Assistant API
-   │
-   ▼
-Shared Business Logic
-(helpers.py)
-   │
-   ├───────────────┐
-   ▼               ▼
-SQLite          IoT Data
-Database        (ESP32)
-   ▲               │
-   └────── HTTP ───┘
+database/database_setup.py
+
+Database connection is managed through:
+
+backend/database.py
 
 Frontend Sections
 
@@ -293,14 +475,14 @@ Medicine Details
 
 Assistant
 
-Running the Project
+Run the Project
 
 From the project root:
 
 pip install -r requirements.txt
 python -m backend.app
 
-Backend:
+Backend URL:
 
 http://127.0.0.1:5001
 
@@ -308,12 +490,14 @@ Health check:
 
 http://127.0.0.1:5001/health
 
-For ESP32 testing, the serverUrl in the IoT code should point to the laptop's local IP address on the same network:
+For ESP32 testing, set the backend URL in the IoT code to the laptop's local IP address:
 
-const char* serverUrl = "http://<LAPTOP-IP>:5001/temperature";
+const char* serverUrl = "http://<HOTSPOT IP>:5001/temperature";
+
+The ESP32 and laptop must be connected to the same network.
 
 Project Status
 
 Completed
 
-The PharmaTrack system includes medicine, batch, inventory, sales, expiry, FEFO, demand, reorder, IoT cold-chain monitoring, alerts, medicine-details, and Assistant functionality with a modular Flask backend and centralized SQLite database.
+PharmaTrack integrates medicine and batch management, inventory and sales operations, FEFO and expiry tracking, demand and reorder analysis, ESP32-based cold-chain monitoring, alert management, medicine details, and the operational Assistant through a modular Flask backend and a centralized SQLite database.
